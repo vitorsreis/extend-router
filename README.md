@@ -1,4 +1,4 @@
-# Elegant and fast request router for PHP 8.2
+# Very elegant, fast and powerful router for PHP 8.2
 Indexing by words tree and regex pattern, this router is very elegant, fast and powerful. Architected as a queue of merged middlewares, it proposes multiple interactions in routes with cache, contexts and persistent data.
 
 ## Install
@@ -7,8 +7,10 @@ composer require "d5whub/extend-router"
 ```
 
 ---
+
 # Benchmark
 Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).
+
 ---
 
 ## Usage
@@ -22,6 +24,7 @@ $router->get('/', function () { echo "hello word" });
 $router->get('/product/:id(\d+)', function ($id) { echo "page product $id" });    
 $router->match('GET', '/product/100')->execute(); // output: "page product 100"
 ```
+
 ###### Context param
 Context contains all information of current execution, use argument with name "$context" of type ommited, "mixed" or "\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static
 ```php
@@ -31,12 +34,14 @@ $router->get('/aaa', function ($context) { });
 $router->any('/aaa', function (mixed $context) { });
 $router->get('/a*', function (Context $context) { });
 ```
+
 ###### Friendly uris
 ```php
 $router->post('/product/:id(\d+)', function ($id) { echo "save product $id" });
 $router->friendly('/iphone', '/product/100');
 $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 ```
+
 ###### Callback with arguments
 ```php
 $router->any('/:var1/:var2', function () { ... });
@@ -48,6 +53,7 @@ $router->any('/:var1/:var2', function ($var1, $context) { ... });
 $router->any('/:var1/:var2', function ($var2, $context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
 ```
+
 ###### Callback types
 ```php
 // by native function name
@@ -134,6 +140,7 @@ $router->any('/:var1/:var2', new class {
     public function __invoke($var1, $var2, $context) { ... }
 });
 ```
+
 ###### Persisting data
 ```php
 use D5WHUB\Extend\Router\Context;
@@ -150,6 +157,7 @@ $context = $router->match('GET', '/aaa')
 
 echo $context->get('xxx'); // output: "21"
 ```
+
 ###### Merge middlewares
 ```php
 $router->get('/aaa', function () { echo "1 "; }, function () { echo "1 "; }, function () { echo "1 "; });
@@ -162,6 +170,7 @@ $router->get('/:var', function ($var) { echo "7 "; });
 $router->any('/:var', function ($var) { echo "8 "; });
 $router->match('GET', '/aaa')->execute(); // output: "1 1 1 2 3 4 5 6 7 8 "
 ```
+
 ###### Stop Propagation
 ```php
 use D5WHUB\Extend\Router\Context;

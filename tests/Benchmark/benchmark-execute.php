@@ -11,13 +11,13 @@ $setting = [
     'num_instantiations' => 1,
 
     // Total of others iterations
-    'num_iterations' => 50,
+    'num_iterations' => 100,
 
     // Total routes added to test
     'num_routes' => 1000,
 
     // Total variables added to routes
-    'num_variables' => 3,
+    'num_variables' => 10,
 
     // Libraries to compare
     'library' => [
@@ -33,14 +33,14 @@ $setting = [
 
     // Tests status
     'tests' => [
-        'instantiation' => true,
-        'first' => true,
-        'last' => true,
-        'not-found' => true,
-        'first-not-allowed' => true,
-        'last-not-allowed' => true,
+//        'instantiation' => true,
+//        'first' => true,
+//        'last' => true,
+//        'not-found' => true,
+//        'first-not-allowed' => true,
+//        'last-not-allowed' => true,
         'rand' => true,
-        'show_end_results' => true,
+//        'show_end_results' => true,
     ],
 
     // Use one instance for all tests except instantiation tests, *not recommended for more real testing*
