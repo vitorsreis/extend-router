@@ -5,7 +5,7 @@
 - [Pux PHP](https://github.com/c9s/Pux)
 - [Symfony Routing](https://github.com/symfony/routing)
 
-# Performed tests 
+## Performed tests 
 - Create instances
 - Matching last route
 - Matching not found route
@@ -33,7 +33,9 @@ php -S 127.0.0.1:80
 start http://127.0.0.1:80/benchmark-execute.php
 ```
 
-# Average results
+---
+
+## Average results
 |                                   Library | Time               | Difference                       |
 |------------------------------------------:|:-------------------|----------------------------------|
 |          **D5WHub Extend Router (3.0.0)** | **0.00015154839s** | **baseline**                     |
