@@ -1,4 +1,10 @@
 # Very elegant, fast and powerful router for PHP 8.2
+[![Latest Stable Version](https://poser.pugx.org/d5whub/extend-router/v/stable)](https://packagist.org/packages/d5whub/extend-router)
+[![PHP Version Require](http://poser.pugx.org/d5whub/extend-router/require/php)](https://packagist.org/packages/d5whub/extend-router)
+[![Monthly Downloads](https://poser.pugx.org/d5whub/extend-router/d/monthly)](https://packagist.org/packages/d5whub/extend-router)
+[![Total Downloads](https://poser.pugx.org/d5whub/extend-router/downloads)](https://packagist.org/packages/d5whub/extend-router)
+[![License](https://poser.pugx.org/d5whub/extend-router/license)](https://packagist.org/packages/d5whub/extend-router)
+
 Indexing by words tree and regex pattern, this router is very elegant, fast and powerful. Architected as a queue of merged middlewares, it proposes multiple interactions in routes with cache, contexts and persistent data.
 
 ## Install
