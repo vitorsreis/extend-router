@@ -6,6 +6,11 @@ Indexing by words tree and regex pattern, this router is very elegant, fast and 
 composer require "d5whub/extend-router"
 ```
 
+---
+# Benchmark
+Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).
+---
+
 ## Usage
 ```php
 use D5WHUB\Extend\Router\Router;
@@ -171,6 +176,3 @@ $router->get('/:var', function ($var) { echo "7 "; });
 $router->any('/:var', function ($var) { echo "8 "; });
 $router->match('GET', '/aaa')->execute(); // output: "1 1 1 2 3 4 "
 ```
-#
-# Benchmark
-Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).
