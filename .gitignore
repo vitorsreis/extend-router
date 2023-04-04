@@ -1,0 +1,5 @@
+/.idea/
+/vendor/
+/tests/Benchmark/vendor/
+composer.lock
+phpunit.xml

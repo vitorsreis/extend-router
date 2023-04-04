@@ -1,0 +1,37 @@
+{
+    "name": "d5whub/extend-router-benchmark",
+    "description": "For benchmark ",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Vitor Reis",
+            "email": "vitor@d5w.com.br"
+        }
+    ],
+    "keywords": [
+        "benchmark",
+        "routing",
+        "router"
+    ],
+    "autoload": {
+        "psr-4": {
+            "D5WHUB\\Extend\\Router\\": "../../src/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+
+        "d5whub/extend-benchmark": "^1.0",
+        "nikic/fast-route": "dev-master",
+        "symfony/routing": "6.3.x-dev",
+        "aura/router": "4.x-dev",
+        "phpsgi/phpsgi": "dev-master",
+        "universal/universal": "dev-master",
+        "corneltek/pux": "dev-master",
+        "zendframework/zend-diactoros": "^2.2",
+        "klein/klein": "dev-master"
+    },
+    "config": {
+        "platform-check": false
+    }
+}
