@@ -1,7 +1,7 @@
 # Benchmark with leading public libraries
 - [Aura Router](https://github.com/auraphp/Aura.Router)
-- [Klein.php](https://github.com/klein/klein.php)
 - [FastRoute](https://github.com/nikic/FastRoute)
+- [Klein.php](https://github.com/klein/klein.php)
 - [Pux PHP](https://github.com/c9s/Pux)
 - [Symfony Routing](https://github.com/symfony/routing)
 
