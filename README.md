@@ -32,7 +32,7 @@ $router->match('GET', '/product/100')->execute(); // output: "page product 100"
 ```
 
 ###### Context param
-Context contains all information of current execution, use argument with name "$context" of type ommited, "mixed" or "\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static
+Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static
 ```php
 use D5WHUB\Extend\Router\Context;
 
