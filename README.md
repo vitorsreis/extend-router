@@ -5,7 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/d5whub/extend-router/downloads)](https://packagist.org/packages/d5whub/extend-router)
 [![License](https://poser.pugx.org/d5whub/extend-router/license)](https://packagist.org/packages/d5whub/extend-router)
 
-Indexing by words tree and regex pattern, this router is very elegant, fast and powerful. Architected as a queue of merged middlewares, it proposes multiple interactions in routes with cache, contexts and persistent data.
+Indexing by words tree and regex marked, this router is very elegant, fast and powerful. Architected as a queue of merged middlewares, it proposes multiple interactions in routes with cache, contexts and persistent data.
 
 ## Install
 ```shell
