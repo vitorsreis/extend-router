@@ -20,6 +20,7 @@
     <testsuites>
         <testsuite name="D5W Extend Router Unit Test Suite">
             <directory>./tests</directory>
+            <exclude>./tests/Benchmark</exclude>
         </testsuite>
     </testsuites>
 </phpunit>
