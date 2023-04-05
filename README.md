@@ -56,11 +56,11 @@ $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 Filters are used to add regex to route variables in a nicer and cleaner way.
 
 ```php
-$router->get('/:var1|d', fn($var1) => "FILTER-d : $var1");
-$router->get('/:var1|w', fn($var1) => "FILTER-w : $var1");
+$router->get('/:var1|09', fn($var1) => "FILTER[09] : $var1");
+$router->get('/:var1|az', fn($var1) => "FILTER[az] : $var1");
 
-$router->match('GET', '/111')->execute(); // output: "FILTER-d : 111"
-$router->match('GET', '/aaa')->execute(); // output: "FILTER-w : aaa"
+$router->match('GET', '/111')->execute(); // output: "FILTER[09] : 111"
+$router->match('GET', '/aaa')->execute(); // output: "FILTER[az] : aaa"
 ```
 
 You can add custom filters:
@@ -74,15 +74,19 @@ $router->get('/:var1|w10', fn() => 'CUSTOM_FILTER');
 
 Below are pre-registered filters:
 
-|            Key             | Regex                                                                    |
-|:--------------------------:|--------------------------------------------------------------------------|
-| _&lt;omitted or empty&gt;_ | [^\/]+                                                                   |
-|             d              | \d+                                                                      |
-|             D              | \D+                                                                      |
-|             w              | \w+                                                                      |
-|             W              | \W+                                                                      |
-|            uuid            | [0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12} |
-
+|            Key             | Regex                                                                           |
+|:--------------------------:|---------------------------------------------------------------------------------|
+| _&lt;omitted or empty&gt;_ | \[^\/]+                                                                         |
+|             09             | \[0-9]+                                                                         |
+|             az             | \[a-z]+                                                                         |
+|             AZ             | \[A-Z]+                                                                         |
+|             aZ             | \[a-zA-Z]+                                                                      |
+|             d              | \d+                                                                             |
+|             d              | \d+                                                                             |
+|             D              | \D+                                                                             |
+|             w              | \w+                                                                             |
+|             W              | \W+                                                                             |
+|            uuid            | \[0-9a-f]{8}-\[0-9a-f]{4}-\[0-5]\[0-9a-f]{3}-\[089ab]\[0-9a-f]{3}-\[0-9a-f]{12} |
 ---
 
 ### Callback with arguments

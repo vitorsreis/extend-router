@@ -38,6 +38,10 @@ class Manager
         $this->routeCollection = new RouteCollection();
 
         $this->filterCollection['*'] = '[^\/]+'; // default
+        $this->filterCollection['09'] = '[0-9]+';
+        $this->filterCollection['az'] = '[a-z]+';
+        $this->filterCollection['AZ'] = '[A-Z]+';
+        $this->filterCollection['aZ'] = '[a-zA-Z]+';
         $this->filterCollection['d'] = '\d+';
         $this->filterCollection['D'] = '\D+';
         $this->filterCollection['w'] = '\w+';
