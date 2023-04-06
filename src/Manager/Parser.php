@@ -118,7 +118,7 @@ trait Parser
                     $paramNames[$argCount] = $paramName;
                     $argCount++;
                 } elseif ($match[0] === '[') {
-                    $words[] = ':';
+                    $words[] = '*';
 
                     $matchSplit = preg_split(self::REGEX_LOOSE_FILTER, $match, 2, self::PREG_SPLIT_FLAGS);
                     $filterKey = $matchSplit[0] ?? '';
