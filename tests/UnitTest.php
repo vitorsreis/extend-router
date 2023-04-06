@@ -1,7 +1,8 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
+ * @noinspection PhpUnhandledExceptionInspection
  */
 
 declare(strict_types=1);

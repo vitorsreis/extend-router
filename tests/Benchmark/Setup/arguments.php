@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of d5whub extend router
+ * @author Vitor Reis <vitor@d5w.com.br>
+ */
 
 declare(strict_types=1);
 
@@ -43,10 +47,8 @@ for ($i = 0; $i < $setting['num_routes']; $i++) {
     }
 }
 
-foreach ($result as $key => &$data) {
-    $data['match']['first'] = current($urls);
-    $data['match']['last'] = end($urls);
-}
+$data['match']['first'] = current($urls);
+$data['match']['last'] = end($urls);
 
 do {
     shuffle($urls);

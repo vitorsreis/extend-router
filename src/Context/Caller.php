@@ -34,17 +34,15 @@ trait Caller
         foreach ($params as $name => $argument) {
             if ($argument['type'] === 'context') {
                 $result[$name] = $this;
+            } elseif (isset($this->current->params->$name)) {
+                $result[$name] = $this->current->params->$name;
+            } elseif (array_key_exists('default', $argument)) {
+                $result[$name] = $argument['default'];
             } else {
-                if (isset($this->current->params->$name)) {
-                    $result[$name] = $this->current->params->$name;
-                } elseif (array_key_exists('default', $argument)) {
-                    $result[$name] = $argument['default'];
-                } else {
-                    throw new RuntimeException(
-                        sprintf("Required argument \"%s\" for invoke \"%s\"!", $name, $argument['name']),
-                        500
-                    );
-                }
+                throw new RuntimeException(
+                    sprintf("Required argument \"%s\" for invoke \"%s\"!", $name, $argument['name']),
+                    500
+                );
             }
         }
 

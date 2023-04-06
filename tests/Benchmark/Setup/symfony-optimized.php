@@ -1,4 +1,8 @@
 <?php
+/**
+ * This file is part of d5whub extend router
+ * @author Vitor Reis <vitor@d5w.com.br>
+ */
 
 declare(strict_types=1);
 
