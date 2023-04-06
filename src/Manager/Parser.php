@@ -86,6 +86,8 @@ trait Parser
      */
     private function parseRoute(string $route): array
     {
+        $route = $this->parseUri($route);
+
         $static = true;
         $pattern = '';
         $words = [];

@@ -22,7 +22,8 @@ trait Matcher
      */
     private function matchRoute(string $httpMethod, string $uri): Context
     {
-        $uri = $this->parseUri($uri);
+        $uri = preg_quote($this->parseUri($uri), '~');
+
         $friendly = null;
 
         # REWRITE FRIENDLY
