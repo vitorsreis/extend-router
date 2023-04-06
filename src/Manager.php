@@ -72,7 +72,7 @@ class Manager
     {
         $httpMethods = $this->parseHttpMethods($httpMethod);
 
-        [$pattern, $paramNames, $static, $words] = $this->parseRoute($route);
+        [$route, $pattern, $paramNames, $static, $words] = $this->parseRoute($route);
 
         $this->routeCollection->add(
             $httpMethods,

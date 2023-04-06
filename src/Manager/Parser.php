@@ -146,7 +146,7 @@ trait Parser
             }
         }
 
-        return [$pattern, $paramNames, $static, $words];
+        return [$route,$pattern, $paramNames, $static, $words];
     }
 
     /**

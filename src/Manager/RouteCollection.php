@@ -40,7 +40,7 @@ class RouteCollection
         array  $middlewares
     ): self {
         $index = $static
-            ? $this->addStatic($pattern)
+            ? $this->addStatic($route)
             : $this->addVariable($pattern, $words);
 
         $this->routeCollection[$index][] = [
