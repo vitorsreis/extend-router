@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
@@ -13,7 +13,7 @@ use D5WHUB\Extend\Router\Context\Header\ContextState;
 use D5WHUB\Extend\Router\Exception\RuntimeException;
 use D5WHUB\Extend\Router\Exception\SyntaxException;
 use D5WHUB\Extend\Router\Router;
-use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithContructContext;
+use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithConstructContext;
 use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithParams;
 use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassStaticMethod;
 use PHPUnit\Framework\TestCase;
@@ -173,8 +173,8 @@ class UnitTest extends TestCase
     public function testWithFilter()
     {
         ($router = new Router())
-            ->get('/:id|D', fn($id) => "TEST:IS_LETTER")
-            ->get('/:id|d', fn($id) => "TEST:IS_NUMBER");
+            ->get('/:id[D]', fn($id) => "TEST:IS_LETTER")
+            ->get('/:id[d]', fn($id) => "TEST:IS_NUMBER");
 
         # \D+
         $match = $router->match('GET', '/aaa');
@@ -191,7 +191,7 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 
-    public function testJocker()
+    public function testJoker()
     {
         ($router = new Router())
             ->get('/user/*', fn() => "TEST");
@@ -303,8 +303,8 @@ class UnitTest extends TestCase
     public function testCustomFilter()
     {
         ($router = new Router())
-            ->addFilter('onlynumber', '\d+')
-            ->get('/:var1|onlynumber', fn() => 'CUSTOM_FILTER');
+            ->addFilter('only_number', '\d+')
+            ->get('/:var1[only_number]', fn() => 'CUSTOM_FILTER');
 
         # OK
         $match = $router->match('GET', '/100');
@@ -362,14 +362,14 @@ class UnitTest extends TestCase
             ->get('/:var1/:var1', fn() => '');
     }
 
-    public function testSyntaxErrorNotImplemetedFilter()
+    public function testSyntaxErrorNotImplementedFilter()
     {
         $this->expectException(SyntaxException::class);
         $this->expectExceptionCode(500);
         $this->expectExceptionMessage("Filter \"xxx\" not implemented");
 
         (new Router())
-            ->get('/:var1|xxx', fn() => '');
+            ->get('/:var1[xxx]', fn() => '');
     }
 
     public function testRequiredArgumentError()
@@ -493,10 +493,10 @@ class UnitTest extends TestCase
 
     public function testWithMiddlewareByVariableFunction()
     {
-        $varfunc = fn($var1, $var2) => $var1 + $var2;
+        $func = fn($var1, $var2) => $var1 + $var2;
 
         ($router = new Router())
-            ->get('/:var1/:var2', $varfunc);
+            ->get('/:var1/:var2', $func);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -581,10 +581,10 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 
-    public function testWithMiddlewareByClassMethodWithContructContextArray()
+    public function testWithMiddlewareByClassMethodWithConstructContextArray()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', [ MiddlewareByClassMethodWithContructContext::class, 'execute' ]);
+            ->get('/:var1/:var2', [ MiddlewareByClassMethodWithConstructContext::class, 'execute' ]);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -593,10 +593,10 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 
-    public function testWithMiddlewareByClassMethodWithContructContextString()
+    public function testWithMiddlewareByClassMethodWithConstructContextString()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithContructContext::execute"); // phpcs:ignore
+            ->get('/:var1/:var2', "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithConstructContext::execute"); // phpcs:ignore
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -622,7 +622,7 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 
-    public function testWithMiddlewareByAnonymousClassMethodWithContructContextArray()
+    public function testWithMiddlewareByAnonymousClassMethodWithConstructContextArray()
     {
         ($router = new Router())
             ->get('/:var1/:var2', [ new class {
@@ -665,8 +665,26 @@ class UnitTest extends TestCase
         $match = $router->match('GET', '/aaa');
         $this->assertInstanceOf(Context::class, $match);
         $this->assertEquals(ContextState::PENDING, $match->header->state);
-        $this->assertEquals(2, $match->execute([])->result);
+        $this->assertEquals(2, $match->execute()->result);
         $this->assertEquals(ContextState::STOPPED, $match->header->state);
         $this->assertEquals([ 1, 2 ], $match->get('steps'));
+    }
+
+    public function testLooseFilter()
+    {
+        ($router = new Router())
+            ->addFilter('cf', '(\d{2})')
+            ->get('/user/[az]/[cf]/:var[cf]', fn() => "TEST");
+
+        $match = $router->match('GET', '/user/aaa/12/12');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals('TEST', $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionCode(404);
+        $this->expectExceptionMessage("Route \"/user/AAA/1/12\" not found!");
+        $router->match('GET', '/user/AAA/1/12');
     }
 }

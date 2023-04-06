@@ -10,7 +10,7 @@ namespace D5WHUB\Test\Extend\Router\UnitTest;
 
 use D5WHUB\Extend\Router\Context;
 
-class MiddlewareByClassMethodWithContructContext
+class MiddlewareByClassMethodWithConstructContext
 {
     public function __construct(
         protected Context $context

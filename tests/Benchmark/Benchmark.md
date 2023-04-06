@@ -38,7 +38,7 @@ start http://127.0.0.1:80/benchmark-execute.php
 ## Average results
 |                                   Library | Time               | Difference                       |
 |------------------------------------------:|:-------------------|----------------------------------|
-|          **D5WHub Extend Router (3.0.0)** | **0.00015154839s** | **baseline**                     |
+|          **D5WHub Extend Router (3.0.1)** | **0.00015154839s** | **baseline**                     |
 |      FastRoute (nikic/fast-route - 1.3.0) | 0.00024784088s     | 63.5% slower (+0.00009629250s)   |
 |           Pux PHP (corneltek/pux - 1.6.0) | 0.00081560135s     | 438.2% slower (+0.00066405296s)  |
 | Symfony Routing (symfony/routing - 6.2.8) | 0.00202444553s     | 1235.8% slower (+0.00187289715s) |

@@ -60,15 +60,17 @@ trait Matcher
                 }
 
                 foreach ($collection as $route) {
+                    $params = [];
+                    foreach ($route['paramNames'] as $pos => $name) {
+                        $params[$name] = $paramValues["A$pos"] ?? null;
+                    }
+
                     $current = [
                         'route' => $index,
                         'httpMethod' => $httpMethod,
                         'uri' => $uri,
                         'friendly' => $friendly,
-                        'params' => array_combine(
-                            $route['paramNames'],
-                            $paramValues
-                        )
+                        'params' => $params
                     ];
 
                     foreach ($route['middlewares'] as $middleware) {

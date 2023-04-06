@@ -19,7 +19,13 @@ use ReflectionMethod;
 
 trait Parser
 {
-    private const PATTERN_VARIABLE = '~(\*|/|:[a-zA-Z_]\w*\|?\w*)~';
+    private const REGEX_MATCH = '~(\*|/|:[a-zA-Z_]\w*(?:\[\w*])?|\[\w*\])~';
+
+    private const REGEX_VARIABLE = '~:(\w+)(?:\[(\w*)])?~';
+
+    private const REGEX_LOOSE_FILTER = '~\[(\w*)]~';
+
+    private const PREG_SPLIT_FLAGS = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE;
 
     private const PATTERN_FILTER_KEY = '~\W~';
 
@@ -84,8 +90,9 @@ trait Parser
         $pattern = '';
         $words = [];
         $paramNames = [];
+        $argCount = 0;
 
-        if ($split = preg_split(self::PATTERN_VARIABLE, $route, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE)) {
+        if ($split = preg_split(self::REGEX_MATCH, $route, -1, self::PREG_SPLIT_FLAGS)) {
             $max = count($split);
 
             for ($i = 0; $i < $max; $i++) {
@@ -94,9 +101,9 @@ trait Parser
                 if ($match[0] === ':') {
                     $words[] = ':';
 
-                    $matchSplit = explode('|', $match);
+                    $matchSplit = preg_split(self::REGEX_VARIABLE, $match, 2, self::PREG_SPLIT_FLAGS);
+                    $paramName = $matchSplit[0];
 
-                    $paramName = substr($matchSplit[0], 1);
                     if (in_array($paramName, $paramNames)) {
                         throw new SyntaxException("Param with duplicate name \":$paramName\"", 500);
                     }
@@ -107,8 +114,21 @@ trait Parser
                     }
 
                     $static = false;
-                    $paramNames[] = $paramName;
-                    $pattern .= "({$this->filterCollection[$filterKey]})";
+                    $pattern .= "(?<A$argCount>{$this->filterCollection[$filterKey]})";
+                    $paramNames[$argCount] = $paramName;
+                    $argCount++;
+                } elseif ($match[0] === '[') {
+                    $words[] = ':';
+
+                    $matchSplit = preg_split(self::REGEX_LOOSE_FILTER, $match, 2, self::PREG_SPLIT_FLAGS);
+                    $filterKey = $matchSplit[0] ?? '';
+
+                    if (!isset($this->filterCollection[$filterKey])) {
+                        throw new SyntaxException("Filter \"$filterKey\" not implemented", 500);
+                    }
+
+                    $static = false;
+                    $pattern .= $this->filterCollection[$filterKey];
                 } else {
                     $words[] = $match;
 

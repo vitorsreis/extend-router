@@ -26,7 +26,7 @@ use D5WHUB\Extend\Router\Cache\Memory;
 
 $router = new Router(new Memory());
 $router->get('/', function () { echo "hello word" });
-$router->get('/product/:id|d', function ($id) { echo "page product $id" });    
+$router->get('/product/:id[d]', function ($id) { echo "page product $id" });    
 $router->match('GET', '/product/100')->execute(); // output: "page product 100"
 ```
 
@@ -45,7 +45,7 @@ $router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { });
 ### Friendly uris
 You can add friendly url to redirect to specific routes:
 ```php
-$router->post('/product/:id|d', function ($id) { echo "save product $id" });
+$router->post('/product/:id[d]', function ($id) { echo "save product $id" });
 $router->friendly('/iphone', '/product/100');
 $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 ```
@@ -56,20 +56,29 @@ $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 Filters are used to add regex to route variables in a nicer and cleaner way.
 
 ```php
-$router->get('/:var1|09', fn($var1) => "FILTER[09] : $var1");
-$router->get('/:var1|az', fn($var1) => "FILTER[az] : $var1");
+$router->get('/:var1[09]', fn($var1) => "FILTER[09] : $var1");
+$router->get('/:var1[az]', fn($var1) => "FILTER[az] : $var1");
 
 $router->match('GET', '/111')->execute(); // output: "FILTER[09] : 111"
 $router->match('GET', '/aaa')->execute(); // output: "FILTER[az] : aaa"
 ```
 
+You can use loose filter in routes:
+```php
+$router->get('/[09]', fn() => "LOOSE_FILTER[09]");
+$router->get('/[az]', fn() => "LOOSE_FILTER[az]");
+
+$router->match('GET', '/111')->execute(); // output: "JOKER_WITH_FILTER[09]"
+$router->match('GET', '/aaa')->execute(); // output: "JOKER_WITH_FILTER[az]"
+```
+
 You can add custom filters:
 ```php
 $router->addFilter('only_numeric', '\d+')
-$router->get('/:var1|only_numeric', fn() => 'CUSTOM_FILTER');
+$router->get('/:var1[only_numeric]', fn() => 'CUSTOM_FILTER');
 
 $router->addFilter('w10', '\w{10}')
-$router->get('/:var1|w10', fn() => 'CUSTOM_FILTER');
+$router->get('/:var1[w10]', fn() => 'CUSTOM_FILTER');
 ```
 
 Below are pre-registered filters:
