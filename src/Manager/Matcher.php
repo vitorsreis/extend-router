@@ -51,7 +51,7 @@ trait Matcher
             foreach ($indexes as $index => $paramValues) {
                 $collection = array_filter(
                     $this->routeCollection->get($index),
-                    fn($route) => in_array($httpMethod, $route['httpMethod']) || in_array('ANY', $route['httpMethod'])
+                    static fn($route) => in_array($httpMethod, $route['httpMethod']) || in_array('ANY', $route['httpMethod'])
                 );
 
                 if (empty($collection)) {
@@ -155,7 +155,7 @@ trait Matcher
             true,
             false
         )) {
-            $indexes = array_merge($indexes, $match);
+            $indexes = [...$indexes, ...$match];
         }
 
         if ($word !== '/' && !empty($candidates[':']) && $match = $this->indexesWord(
@@ -164,7 +164,7 @@ trait Matcher
             false,
             true
         )) {
-            $indexes = array_merge($indexes, $match);
+            $indexes = [...$indexes, ...$match];
         }
 
         if ($word !== '/' && $is_variable && $match = $this->indexesWord(
@@ -173,7 +173,7 @@ trait Matcher
             false,
             true
         )) {
-            $indexes = array_merge($indexes, $match);
+            $indexes = [...$indexes, ...$match];
         }
 
         if ($is_joker && $match = $this->indexesWord(
@@ -182,7 +182,7 @@ trait Matcher
             true,
             false
         )) {
-            $indexes = array_merge($indexes, $match);
+            $indexes = [...$indexes, ...$match];
         }
 
         if (!empty($candidates[$word]) && $match = $this->indexesWord(
@@ -191,7 +191,7 @@ trait Matcher
             false,
             false
         )) {
-            $indexes = array_merge($indexes, $match);
+            $indexes = [...$indexes, ...$match];
         }
 
         return $indexes;
@@ -206,7 +206,7 @@ trait Matcher
             $pattern = '';
             $length = 0;
 
-            for ($chunk = 0; $chunk < self::INDEXES_PATTERN_MAX_CHUCK, $cursor < $total; $chunk++, $cursor++) {
+            for ($chunk = 0; $chunk < self::INDEXES_PATTERN_MAX_CHUCK && $cursor < $total; $chunk++, $cursor++) {
                 $append = "|{$this->routeCollection->get($indexes[$cursor])[0]['pattern']}(*MARK:$cursor)";
                 $appendLength = strlen($append);
 
@@ -220,7 +220,7 @@ trait Matcher
 
             if (preg_match("~^(?$pattern)$~", $uri, $match)) {
                 $result[$indexes[$match['MARK']]] = array_slice($match, 1, -1);
-                $cursor = intval($match['MARK']) + 1;
+                $cursor = (int)$match['MARK'] + 1;
             }
         }
     }
