@@ -16,16 +16,16 @@ $result = [
 ];
 
 // Initialize
-$variables = $setting['num_variables'] ? array_map(fn($i) => "arg$i", range(1, $setting['num_variables'])) : [];
+$variables = $setting['num_variables'] ? array_map(static fn($i) => "arg$i", range(1, $setting['num_variables'])) : [];
 $url_variables = implode('/', $variables);
 
 foreach ($result as $key => &$data) {
     $data = [
-        'prefix' => $data[0],
-        'suffix' => $data[1],
-        'variables' => implode('/', array_map(fn ($i) => "$data[0]$i$data[1]", $variables)),
-        'routes' => [],
-        'match' => [
+		'prefix' => $data[0],
+		'suffix' => $data[1],
+		'variables' => implode('/', array_map(static fn ($i) => "$data[0]$i$data[1]", $variables)),
+		'routes' => [],
+		'match' => [
             'first' => null,
             'last' => null,
             'rand' => []

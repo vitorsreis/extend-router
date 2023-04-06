@@ -9,10 +9,10 @@ declare(strict_types=1);
 /** @var array $setting */
 /** @var D5WHUB\Extend\Benchmark\Benchmark\Collection[] $benchmark */
 
-(function ($setting, $benchmark) {
+(static function ($setting, $benchmark) {
     $title = 'Klein.php';
     $argument = $setting['arguments']['[*:arg]'];
-    $instance =  function () use ($setting, $argument) {
+    $instance =  static function () use ($setting, $argument) {
         $instance = @new Klein\Klein();
 
         for ($i = 0, $cursor = 0; $i < $setting['num_routes']; $i++, $cursor++) {
@@ -32,7 +32,7 @@ declare(strict_types=1);
                 };
                 $cursor = $cursor > 7 ? 0 : $cursor;
             }
-            $instance->respond($method, $route, fn() => 'TEST');
+            $instance->respond($method, $route, static fn() => 'TEST');
         }
 
         return $instance;
@@ -46,13 +46,13 @@ declare(strict_types=1);
 
     if (!empty($setting['one_instance'])) {
         $instance = $instance();
-        $instance = fn() => $instance;
+        $instance = static fn() => $instance;
     }
 
     ($benchmark['first'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance, $argument) {
             $instance->dispatch(new Klein\Request(
                 $_GET,
                 $_POST,
@@ -67,7 +67,7 @@ declare(strict_types=1);
     ($benchmark['last'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance, $argument) {
             $instance->dispatch(new Klein\Request(
                 $_GET,
                 $_POST,
@@ -82,7 +82,7 @@ declare(strict_types=1);
     ($benchmark['not-found'] ?? null)?->addTest(
         $title,
         ['return' => 404],
-        (fn ($instance) => function () use ($instance) {
+        (static fn ($instance) => static function () use ($instance) {
             $instance->dispatch(new Klein\Request(
                 $_GET,
                 $_POST,
@@ -97,7 +97,7 @@ declare(strict_types=1);
     ($benchmark['first-not-allowed'] ?? null)?->addTest(
         $title,
         ['return' => 405],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance, $argument) {
             $instance->dispatch(new Klein\Request(
                 $_GET,
                 $_POST,
@@ -112,7 +112,7 @@ declare(strict_types=1);
     ($benchmark['last-not-allowed'] ?? null)?->addTest(
         $title,
         ['return' => 405],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance, $argument) {
             $instance->dispatch(new Klein\Request(
                 $_GET,
                 $_POST,
@@ -128,7 +128,7 @@ declare(strict_types=1);
     ($benchmark['rand'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (fn ($instance) => function () use ($instance, &$random) {
+        (static fn ($instance) => static function () use ($instance, &$random) {
             $instance->dispatch(new Klein\Request(
                 $_GET,
                 $_POST,
