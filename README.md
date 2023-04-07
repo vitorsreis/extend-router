@@ -56,11 +56,11 @@ $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 Filters are used to add regex to route variables in a nicer and cleaner way.
 
 ```php
-$router->get('/:var1[09]', fn($var1) => "FILTER[09] : $var1");
-$router->get('/:var1[az]', fn($var1) => "FILTER[az] : $var1");
+$router->get('/:var1[09]', fn($var1) => "VAR1_FILTER[09] : $var1");
+$router->get('/:var1[az]', fn($var1) => "VAR1_FILTER[az] : $var1");
 
-$router->match('GET', '/111')->execute(); // output: "FILTER[09] : 111"
-$router->match('GET', '/aaa')->execute(); // output: "FILTER[az] : aaa"
+echo $router->match('GET', '/111')->execute()->result; // output: "VAR1_FILTER[09] : 111"
+echo $router->match('GET', '/aaa')->execute()->result; // output: "VAR1_FILTER[az] : aaa"
 ```
 
 You can use loose filter in routes:
@@ -68,17 +68,17 @@ You can use loose filter in routes:
 $router->get('/[09]', fn() => "LOOSE_FILTER[09]");
 $router->get('/[az]', fn() => "LOOSE_FILTER[az]");
 
-$router->match('GET', '/111')->execute(); // output: "LOOSE_FILTER[09]"
-$router->match('GET', '/aaa')->execute(); // output: "LOOSE_FILTER[az]"
+echo $router->match('GET', '/111')->execute()->result; // output: "LOOSE_FILTER[09]"
+echo $router->match('GET', '/aaa')->execute()->result; // output: "LOOSE_FILTER[az]"
 ```
 
 You can add custom filters:
 ```php
 $router->addFilter('only_numeric', '\d+')
-$router->get('/:var1[only_numeric]', fn() => 'CUSTOM_FILTER');
+$router->get('/:var1[only_numeric]', fn() => 'CUSTOM_VAR1_FILTER');
 
 $router->addFilter('w10', '\w{10}')
-$router->get('/:var1[w10]', fn() => 'CUSTOM_FILTER');
+$router->get('/[w10]', fn() => 'CUSTOM_LOOSE_FILTER');
 ```
 
 Below are pre-registered filters:
@@ -179,11 +179,13 @@ $router->get('/:var1/:var2', "callback");
 
 // by anonymous function
 $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
+$router->any('/:var1/:var2', static function ($var1, $var2, $context) { ... });
 
 #--------------------------------------------------
 
 // by arrow function
 $router->any('/:var1/:var2', fn($var1, $var2, $context) => { ... });
+$router->any('/:var1/:var2', static fn($var1, $var2, $context) => { ... });
 
 #--------------------------------------------------
 
