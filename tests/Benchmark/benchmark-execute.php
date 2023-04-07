@@ -21,7 +21,6 @@ $setting = [
 
     // Libraries to compare
     'library' => [
-
         'd5whub/extend-benchmark' => true,
         'nikic/fast-route' => true,
         'symfony/routing' => true,

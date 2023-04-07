@@ -68,8 +68,8 @@ You can use loose filter in routes:
 $router->get('/[09]', fn() => "LOOSE_FILTER[09]");
 $router->get('/[az]', fn() => "LOOSE_FILTER[az]");
 
-$router->match('GET', '/111')->execute(); // output: "JOKER_WITH_FILTER[09]"
-$router->match('GET', '/aaa')->execute(); // output: "JOKER_WITH_FILTER[az]"
+$router->match('GET', '/111')->execute(); // output: "LOOSE_FILTER[09]"
+$router->match('GET', '/aaa')->execute(); // output: "LOOSE_FILTER[az]"
 ```
 
 You can add custom filters:
