@@ -95,57 +95,54 @@ trait Parser
         $argCount = 0;
 
         if ($split = preg_split(self::REGEX_MATCH, $route, -1, self::PREG_SPLIT_FLAGS)) {
+            foreach ($split as $match) {
+                if ($match[0] === ':') {
+                    $words[] = ':';
 
-			foreach ($split as $iValue) {
-				$match = $iValue;
+                    $matchSplit = preg_split(self::REGEX_VARIABLE, $match, 2, self::PREG_SPLIT_FLAGS);
+                    $paramName = $matchSplit[0];
 
-				if ($match[0] === ':') {
-					$words[] = ':';
+                    if (in_array($paramName, $paramNames)) {
+                        throw new SyntaxException("Param with duplicate name \":$paramName\"", 500);
+                    }
 
-					$matchSplit = preg_split(self::REGEX_VARIABLE, $match, 2, self::PREG_SPLIT_FLAGS);
-					$paramName = $matchSplit[0];
+                    $filterKey = $matchSplit[1] ?? '*' ?: '*';
+                    if (!isset($this->filterCollection[$filterKey])) {
+                        throw new SyntaxException("Filter \"$filterKey\" not implemented", 500);
+                    }
 
-					if (in_array($paramName, $paramNames)) {
-						throw new SyntaxException("Param with duplicate name \":$paramName\"", 500);
-					}
+                    $static = false;
+                    $pattern .= "(?<A$argCount>{$this->filterCollection[$filterKey]})";
+                    $paramNames[$argCount] = $paramName;
+                    $argCount++;
+                } elseif ($match[0] === '[') {
+                    $words[] = '*';
 
-					$filterKey = $matchSplit[1] ?? '*' ?: '*';
-					if (!isset($this->filterCollection[$filterKey])) {
-						throw new SyntaxException("Filter \"$filterKey\" not implemented", 500);
-					}
+                    $matchSplit = preg_split(self::REGEX_LOOSE_FILTER, $match, 2, self::PREG_SPLIT_FLAGS);
+                    $filterKey = $matchSplit[0] ?? '';
 
-					$static = false;
-					$pattern .= "(?<A$argCount>{$this->filterCollection[$filterKey]})";
-					$paramNames[$argCount] = $paramName;
-					$argCount++;
-				} elseif ($match[0] === '[') {
-					$words[] = '*';
+                    if (!isset($this->filterCollection[$filterKey])) {
+                        throw new SyntaxException("Filter \"$filterKey\" not implemented", 500);
+                    }
 
-					$matchSplit = preg_split(self::REGEX_LOOSE_FILTER, $match, 2, self::PREG_SPLIT_FLAGS);
-					$filterKey = $matchSplit[0] ?? '';
+                    $static = false;
+                    $pattern .= $this->filterCollection[$filterKey];
+                } else {
+                    $words[] = $match;
 
-					if (!isset($this->filterCollection[$filterKey])) {
-						throw new SyntaxException("Filter \"$filterKey\" not implemented", 500);
-					}
+                    if ($match[0] === '*') {
+                        $static = false;
+                        $pattern .= '.*?';
+                    } elseif ($match[0] === '/') {
+                        $pattern .= '\/';
+                    } else {
+                        $pattern .= preg_quote($match, '~');
+                    }
+                }
+            }
+        }
 
-					$static = false;
-					$pattern .= $this->filterCollection[$filterKey];
-				} else {
-					$words[] = $match;
-
-					if ($match[0] === '*') {
-						$static = false;
-						$pattern .= '.*?';
-					} elseif ($match[0] === '/') {
-						$pattern .= '\/';
-					} else {
-						$pattern .= preg_quote($match, '~');
-					}
-				}
-			}
-		}
-
-        return [$route,$pattern, $paramNames, $static, $words];
+        return [$route, $pattern, $paramNames, $static, $words];
     }
 
     /**
@@ -237,18 +234,18 @@ trait Parser
                     $allowed = [$param->getType()->getName()];
                 }
 
-				if (in_array('mixed', $allowed)) {
-					# "mixed $context"
-					$result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
-					continue;
-				}
+                if (in_array('mixed', $allowed)) {
+                    # "mixed $context"
+                    $result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
+                    continue;
+                }
 
-				if (in_array(Context::class, $allowed)) {
-					# "Context $..."
-					$result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
-					continue;
-				}
-			}
+                if (in_array(Context::class, $allowed)) {
+                    # "Context $..."
+                    $result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
+                    continue;
+                }
+            }
 
             if ($param->isDefaultValueAvailable()) {
                 $result[$param->getName()] = [

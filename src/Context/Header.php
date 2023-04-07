@@ -13,12 +13,12 @@ use D5WHUB\Extend\Router\Context\Header\ContextState;
 class Header
 {
     public function __construct(
-        public int          $cursor = -1,
-        public int          $total = -1,
+        public int $cursor = -1,
+        public int $total = -1,
         public ContextState $state = ContextState::PENDING,
-        public float|null   $startTime = null,
-        public float|null   $endTime = null,
-        public float|null   $elapsedTime = null
+        public float|null $startTime = null,
+        public float|null $endTime = null,
+        public float|null $elapsedTime = null
     ) {
     }
 }

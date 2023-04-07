@@ -167,7 +167,7 @@ class UnitTest extends TestCase
         $context = $match->execute();
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
 
-        $this->assertEquals((object)[ 'var1' => 'AAA', 'var2' => 'BBB', 'var3' => 'CCC' ], $context->current->params);
+        $this->assertEquals((object)['var1' => 'AAA', 'var2' => 'BBB', 'var3' => 'CCC'], $context->current->params);
         $this->assertEquals('AAA:CCC', $context->result);
     }
 
@@ -232,7 +232,7 @@ class UnitTest extends TestCase
         $this->assertNull($match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
 
-        $this->assertEquals([ 'm1:u1', 'm2:u1', 'm3:u1', 'm4:u1' ], $results);
+        $this->assertEquals(['m1:u1', 'm2:u1', 'm3:u1', 'm4:u1'], $results);
     }
 
     public function testContext()
@@ -240,19 +240,19 @@ class UnitTest extends TestCase
         ($router = new Router())
             ->get(
                 '/:user_num',
-                static fn($context) => ["m1:u{$context->current->params->user_num}" ],
-                static fn($user_num, $context) => [...$context->result, "m2:u$user_num" ]
+                static fn($context) => ["m1:u{$context->current->params->user_num}"],
+                static fn($user_num, $context) => [...$context->result, "m2:u$user_num"]
             )
             ->get(
                 '/:user_id',
-                static fn(mixed $context) => [...$context->result, "m3:u{$context->current->params->user_id}" ]
+                static fn(mixed $context) => [...$context->result, "m3:u{$context->current->params->user_id}"]
             )
-            ->any('/:uid', static fn($uid, Context $context) => [...$context->result, "m4:u$uid" ]);
+            ->any('/:uid', static fn($uid, Context $context) => [...$context->result, "m4:u$uid"]);
 
         $match = $router->match('GET', '/333');
         $this->assertInstanceOf(Context::class, $match);
         $this->assertEquals(ContextState::PENDING, $match->header->state);
-        $this->assertEquals([ "m1:u333", "m2:u333", "m3:u333", "m4:u333" ], $match->execute()->result);
+        $this->assertEquals(["m1:u333", "m2:u333", "m3:u333", "m4:u333"], $match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 
@@ -382,7 +382,9 @@ class UnitTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage("Required argument \"var1\" for invoke \"D5WHUB\\Test\\Extend\\Router\\requiredArgumentError\"!"); // phpcs:ignore
+        $this->expectExceptionMessage(
+            "Required argument \"var1\" for invoke \"D5WHUB\\Test\\Extend\\Router\\requiredArgumentError\"!"
+        ); // phpcs:ignore
 
         (new Router())
             ->get('/:var2', '\\D5WHUB\\Test\\Extend\\Router\\requiredArgumentError')
@@ -455,7 +457,6 @@ class UnitTest extends TestCase
 
     public function testWithMiddlewareByNativeFunction()
     {
-
         ($router = new Router())
             ->get('/:haystack/:needle', 'stripos');
 
@@ -509,7 +510,7 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByClassStaticMethodArray()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', [ MiddlewareByClassStaticMethod::class, 'params' ]);
+            ->get('/:var1/:var2', [MiddlewareByClassStaticMethod::class, 'params']);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -535,7 +536,7 @@ class UnitTest extends TestCase
         $class = new MiddlewareByClassStaticMethod();
 
         ($router = new Router())
-            ->get('/:var1/:var2', [ $class, "context" ]);
+            ->get('/:var1/:var2', [$class, "context"]);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -547,7 +548,7 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByClassMethodWithParamsArray()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', [ MiddlewareByClassMethodWithParams::class, 'execute' ]);
+            ->get('/:var1/:var2', [MiddlewareByClassMethodWithParams::class, 'execute']);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -559,7 +560,10 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByClassMethodWithParamsString()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithParams::execute"); // phpcs:ignore
+            ->get(
+                '/:var1/:var2',
+                "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithParams::execute"
+            ); // phpcs:ignore
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -573,7 +577,7 @@ class UnitTest extends TestCase
         $class = new MiddlewareByClassMethodWithParams();
 
         ($router = new Router())
-            ->get('/:var1/:var2', [ $class, "execute" ]);
+            ->get('/:var1/:var2', [$class, "execute"]);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -585,7 +589,7 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByClassMethodWithConstructContextArray()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', [ MiddlewareByClassMethodWithConstructContext::class, 'execute' ]);
+            ->get('/:var1/:var2', [MiddlewareByClassMethodWithConstructContext::class, 'execute']);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -597,7 +601,10 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByClassMethodWithConstructContextString()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithConstructContext::execute"); // phpcs:ignore
+            ->get(
+                '/:var1/:var2',
+                "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithConstructContext::execute"
+            ); // phpcs:ignore
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -609,12 +616,15 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByAnonymousClassInvokeMethod()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', new class {
-                public function __invoke(Context $context): int
-                {
-                    return $context->current->params->var1 + $context->current->params->var2;
+            ->get(
+                '/:var1/:var2',
+                new class {
+                    public function __invoke(Context $context): int
+                    {
+                        return $context->current->params->var1 + $context->current->params->var2;
+                    }
                 }
-            });
+            );
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -626,12 +636,15 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByAnonymousClassMethodWithConstructContextArray()
     {
         ($router = new Router())
-            ->get('/:var1/:var2', [ new class {
-                public function execute($var1, $var2): int
-                {
-                    return $var1 + $var2;
-                }
-            }, 'execute' ]);
+            ->get('/:var1/:var2', [
+                new class {
+                    public function execute($var1, $var2): int
+                    {
+                        return $var1 + $var2;
+                    }
+                },
+                'execute'
+            ]);
 
         $match = $router->match('GET', '/111/222');
         $this->assertInstanceOf(Context::class, $match);
@@ -668,7 +681,7 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::PENDING, $match->header->state);
         $this->assertEquals(2, $match->execute()->result);
         $this->assertEquals(ContextState::STOPPED, $match->header->state);
-        $this->assertEquals([ 1, 2 ], $match->get('steps'));
+        $this->assertEquals([1, 2], $match->get('steps'));
     }
 
     public function testLooseFilter()

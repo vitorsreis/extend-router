@@ -31,13 +31,13 @@ class RouteCollection
      * @param string[] $paramNames
      */
     public function add(
-        array  $httpMethod,
+        array $httpMethod,
         string $route,
         string $pattern,
-        array  $paramNames,
-        bool   $static,
-        array  $words,
-        array  $middlewares
+        array $paramNames,
+        bool $static,
+        array $words,
+        array $middlewares
     ): self {
         $index = $static
             ? $this->addStatic($route)
@@ -63,11 +63,11 @@ class RouteCollection
     private function addVariable(string $pattern, array $words): int
     {
         $current = &$this->variableWords;
-		foreach ($words as $iValue) {
-			$current = &$current[$iValue];
-		}
+        foreach ($words as $word) {
+            $current = &$current[$word];
+        }
 
-		$this->variableIndexes[$pattern] = $this->variableIndexes[$pattern] ?? $this->index++;
+        $this->variableIndexes[$pattern] = $this->variableIndexes[$pattern] ?? $this->index++;
 
         $current['$'][] = $this->variableIndexes[$pattern];
 

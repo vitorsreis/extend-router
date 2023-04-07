@@ -51,7 +51,7 @@ trait Matcher
             foreach ($indexes as $index => $paramValues) {
                 $collection = array_filter(
                     $this->routeCollection->get($index),
-                    static fn($route) => in_array($httpMethod, $route['httpMethod']) || in_array('ANY', $route['httpMethod'])
+                    static fn($i) => in_array($httpMethod, $i['httpMethod']) || in_array('ANY', $i['httpMethod'])
                 );
 
                 if (empty($collection)) {
@@ -88,8 +88,8 @@ trait Matcher
         }
 
         return match ($result) {
-            404     => throw new RuntimeException("Route \"$uri\" not found!", 404),
-            405     => throw new RuntimeException("Method \"$httpMethod\" not allowed for route \"$uri\"!", 405),
+            404 => throw new RuntimeException("Route \"$uri\" not found!", 404),
+            405 => throw new RuntimeException("Method \"$httpMethod\" not allowed for route \"$uri\"!", 405),
             default => new Context($result)
         };
     }
