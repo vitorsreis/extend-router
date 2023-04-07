@@ -47,15 +47,17 @@ for ($i = 0; $i < $setting['num_routes']; $i++) {
     }
 }
 
-$data['match']['first'] = current($urls);
-$data['match']['last'] = end($urls);
+foreach ($result as $key => &$data) {
+    $data['match']['first'] = current($urls);
+    $data['match']['last'] = end($urls);
+}
 
 do {
     shuffle($urls);
     foreach ($result as $key => &$data) {
         $data['match']['rand'] = [...$data['match']['rand'] ?? [], ...$urls];
     }
-} while (count($data['match']['rand']) < $setting['num_iterations']);
-$data['match']['rand'] = array_slice($data['match']['rand'], 0, $setting['num_iterations']);
+} while (count($data['match']['rand']) < $setting['num_random']);
+$data['match']['rand'] = array_slice($data['match']['rand'], 0, $setting['num_random']);
 
 return $result;

@@ -11,13 +11,16 @@ $setting = [
     'num_instantiations' => 1,
 
     // Total of others iterations
-    'num_iterations' => 100,
+    'num_iterations' => 1,
+
+    // Total of random iterations
+    'num_random' => 100,
 
     // Total routes added to test
     'num_routes' => 1000,
 
     // Total variables added to routes
-    'num_variables' => 10,
+    'num_variables' => 5,
 
     // Libraries to compare
     'library' => [
@@ -106,7 +109,8 @@ $agent = new D5WHUB\Extend\Benchmark\Benchmark(
 
 !empty($setting['tests']['rand']) && $benchmark['rand'] = $agent->createBenchmark(
     "Matching random routes",
-    "Benchmark of matching with random added route"
+    "Benchmark of matching with random added route",
+    $setting['num_random']
 );
 
 if (!empty($setting['library']['d5whub/extend-benchmark'])) {
