@@ -9,26 +9,26 @@ declare(strict_types=1);
 /** @var array $setting */
 /** @var D5WHUB\Extend\Benchmark\Benchmark\Collection[] $benchmark */
 
-(function ($setting, $benchmark) {
+(static function ($setting, $benchmark) {
     $title = extension_loaded('pux') ? 'Pux EXT' : 'Pux PHP';
     $argument = $setting['arguments'][':arg'];
-    $instance = function () use ($setting, $argument) {
+    $instance = static function () use ($setting, $argument) {
         $instance = new Pux\Mux();
 
         for ($i = 0, $cursor = 0; $i < $setting['num_routes']; $i++, $cursor++) {
             [ $route, $url ] = $argument['routes'][$i];
             if (!$i || $i === $setting['num_routes'] - 1 || in_array($url, $argument['match']['rand'])) {
-                $instance->get($route, fn() => 'TEST');
+                $instance->get($route, static fn() => 'TEST');
             } else {
                 match ($cursor) {
-                    1       => $instance->get($route, fn() => 'TEST'),
-                    2       => $instance->post($route, fn() => 'TEST'),
-                    3       => $instance->put($route, fn() => 'TEST'),
-                    4       => $instance->patch($route, fn() => 'TEST'),
-                    5       => $instance->delete($route, fn() => 'TEST'),
-                    6       => $instance->options($route, fn() => 'TEST'),
-                    7       => $instance->head($route, fn() => 'TEST'),
-                    default => $instance->any($route, fn() => 'TEST')
+                    1       => $instance->get($route, static fn() => 'TEST'),
+                    2       => $instance->post($route, static fn() => 'TEST'),
+                    3       => $instance->put($route, static fn() => 'TEST'),
+                    4       => $instance->patch($route, static fn() => 'TEST'),
+                    5       => $instance->delete($route, static fn() => 'TEST'),
+                    6       => $instance->options($route, static fn() => 'TEST'),
+                    7       => $instance->head($route, static fn() => 'TEST'),
+                    default => $instance->any($route, static fn() => 'TEST')
                 };
                 $cursor = $cursor > 7 ? 0 : $cursor;
             }
@@ -45,13 +45,13 @@ declare(strict_types=1);
 
     if (!empty($setting['one_instance'])) {
         $instance = $instance();
-        $instance = fn() => $instance;
+        $instance = static fn() => $instance;
     }
 
     ($benchmark['first'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance, $argument) {
             return $instance->match(
                 $argument['match']['first'],
                 new Pux\RouteRequest('GET', $argument['match']['first'])
@@ -62,7 +62,7 @@ declare(strict_types=1);
     ($benchmark['last'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance, $argument) {
             return $instance->match(
                 $argument['match']['last'],
                 new Pux\RouteRequest('GET', $argument['match']['last'])
@@ -73,7 +73,7 @@ declare(strict_types=1);
     ($benchmark['not-found'] ?? null)?->addTest(
         $title,
         ['return' => null],
-        (fn ($instance) => function () use ($instance, $argument) {
+        (static fn ($instance) => static function () use ($instance) {
             return $instance->match('/not-even-real', new Pux\RouteRequest('GET', '/not-even-real'));
         })($instance())
     );
@@ -92,7 +92,8 @@ declare(strict_types=1);
     ($benchmark['rand'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (fn ($instance) => function () use ($instance, &$random) {
+        (static fn ($instance) => static function () use (&$random, $instance)
+		{
             $url = array_shift($random);
             return $instance->match($url, new Pux\RouteRequest('GET', $url))[2]();
         })($instance())

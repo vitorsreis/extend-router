@@ -63,12 +63,11 @@ class RouteCollection
     private function addVariable(string $pattern, array $words): int
     {
         $current = &$this->variableWords;
-        $total = count($words);
-        for ($i = 0; $i < $total; $i++) {
-            $current = &$current[$words[$i]];
-        }
+		foreach ($words as $iValue) {
+			$current = &$current[$iValue];
+		}
 
-        $this->variableIndexes[$pattern] = $this->variableIndexes[$pattern] ?? $this->index++;
+		$this->variableIndexes[$pattern] = $this->variableIndexes[$pattern] ?? $this->index++;
 
         $current['$'][] = $this->variableIndexes[$pattern];
 

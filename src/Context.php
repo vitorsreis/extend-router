@@ -52,11 +52,7 @@ class Context
      */
     public function execute(): self
     {
-        if ($this->header->state !== ContextState::PENDING) {
-            return $this;
-        }
-
-        if (!count($this->middlewares)) {
+		if ($this->header->state !== ContextState::PENDING || !count($this->middlewares)) {
             return $this;
         }
 
