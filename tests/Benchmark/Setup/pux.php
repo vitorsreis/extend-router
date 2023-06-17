@@ -92,8 +92,7 @@ declare(strict_types=1);
     ($benchmark['rand'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (static fn ($instance) => static function () use (&$random, $instance)
-		{
+        (static fn ($instance) => static function () use (&$random, $instance) {
             $url = array_shift($random);
             return $instance->match($url, new Pux\RouteRequest('GET', $url))[2]();
         })($instance())

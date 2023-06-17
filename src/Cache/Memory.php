@@ -19,7 +19,7 @@ class Memory implements Cache
 
     public function has(string $key): bool
     {
-        return isset($this->memory[$key]);
+        return array_key_exists($key, $this->memory);
     }
 
     public function set(string $key, mixed $value): void

@@ -23,12 +23,12 @@
 
         "d5whub/extend-benchmark": "^1.0",
         "nikic/fast-route": "dev-master",
-        "symfony/routing": "6.3.x-dev",
+        "symfony/routing": "7.0.x-dev",
         "aura/router": "4.x-dev",
         "phpsgi/phpsgi": "dev-master",
         "universal/universal": "dev-master",
         "corneltek/pux": "dev-master",
-        "zendframework/zend-diactoros": "^2.2",
+        "zendframework/zend-diactoros": "dev-master",
         "klein/klein": "dev-master"
     },
     "config": {

@@ -43,7 +43,7 @@ trait Parser
         return array_map(
             static fn($httpMethod) => match ($httpMethod) {
                 'ANY', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD' => $httpMethod,
-                default                                                           => match ($httpCode) {
+                default => match ($httpCode) {
                     400 => throw new RuntimeException("Http method \"$httpMethod\" invalid", $httpCode),
                     500 => throw new SyntaxException("Http method \"$httpMethod\" invalid!", $httpCode)
                 }

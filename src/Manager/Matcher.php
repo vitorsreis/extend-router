@@ -13,7 +13,7 @@ use D5WHUB\Extend\Router\Exception\RuntimeException;
 
 trait Matcher
 {
-    private const INDEXES_PATTERN_MAX_CHUCK = 30;
+    private const INDEXES_PATTERN_MAX_CHUCK = 100;
 
     private const INDEXER_PATTERN_MAX_LENGTH = 10_000;
 

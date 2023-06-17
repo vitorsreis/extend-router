@@ -67,8 +67,7 @@ declare(strict_types=1);
     ($benchmark['first'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (static fn ($instance) => static function () use ($context, $instance, $argument)
-		{
+        (static fn ($instance) => static function () use ($context, $instance, $argument) {
             $context->setMethod('GET');
             return $instance->match($argument['match']['first'])['_controller']();
         })($instance())
@@ -77,8 +76,7 @@ declare(strict_types=1);
     ($benchmark['last'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (static fn ($instance) => static function () use ($context, $instance, $argument)
-		{
+        (static fn ($instance) => static function () use ($context, $instance, $argument) {
             $context->setMethod('GET');
             return $instance->match($argument['match']['last'])['_controller']();
         })($instance())
@@ -87,8 +85,7 @@ declare(strict_types=1);
     ($benchmark['not-found'] ?? null)?->addTest(
         $title,
         ['throw' => Symfony\Component\Routing\Exception\ResourceNotFoundException::class],
-        (static fn ($instance) => static function () use ($context, $instance)
-		{
+        (static fn ($instance) => static function () use ($context, $instance) {
             $context->setMethod('GET');
             $instance->match('/not-even-real');
         })($instance())
@@ -97,8 +94,7 @@ declare(strict_types=1);
     ($benchmark['first-not-allowed'] ?? null)?->addTest(
         $title,
         ['throw' => Symfony\Component\Routing\Exception\MethodNotAllowedException::class],
-        (static fn ($instance) => static function () use ($context, $instance, $argument)
-		{
+        (static fn ($instance) => static function () use ($context, $instance, $argument) {
             $context->setMethod('POST');
             $instance->match($argument['match']['first']);
         })($instance())
@@ -107,8 +103,7 @@ declare(strict_types=1);
     ($benchmark['last-not-allowed'] ?? null)?->addTest(
         $title,
         ['throw' => Symfony\Component\Routing\Exception\MethodNotAllowedException::class],
-        (static fn ($instance) => static function () use ($context, $instance, $argument)
-		{
+        (static fn ($instance) => static function () use ($context, $instance, $argument) {
             $context->setMethod('POST');
             $instance->match($argument['match']['last']);
         })($instance())
@@ -118,8 +113,7 @@ declare(strict_types=1);
     ($benchmark['rand'] ?? null)?->addTest(
         $title,
         ['return' => 'TEST'],
-        (static fn ($instance) => static function () use ($context, $instance, &$random)
-		{
+        (static fn ($instance) => static function () use ($context, $instance, &$random) {
             $context->setMethod('GET');
             return $instance->match(array_shift($random))['_controller']();
         })($instance())
