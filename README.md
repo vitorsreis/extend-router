@@ -6,12 +6,12 @@
 [![License](https://poser.pugx.org/d5whub/extend-router/license)](https://packagist.org/packages/d5whub/extend-router)
 
 Indexing by words tree and regex marked, this router is very elegant, fast and powerful. Architected as a queue of merged middlewares (not unique match), it proposes multiple interactions in routes with cache, contexts and persistent data.
+Tested in PHP ```5.6``` ```7.4``` ```8.1``` ```8.2```
 
 ---
 
 ## Benchmark
 Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).\
-Tested in PHP ```5.6``` ```7.4``` ```8.1``` ```8.2```
 
 ---
 
