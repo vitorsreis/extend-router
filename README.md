@@ -11,7 +11,7 @@ Tested in PHP ```5.6``` ```7.4``` ```8.1``` ```8.2```
 ---
 
 ## Benchmark
-Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).\
+Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).
 
 ---
 
