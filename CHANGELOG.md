@@ -1,6 +1,12 @@
 CHANGELOG
 ---
 
+## 4.0.0
+- Downgrade for PHP 5.6+ usage
+- PSR-12 code style
+- Throw reserved name "context" from router
+- Fix caller optional params
+
 ## 3.0.2
 - Performance improvements
 - Fix benchmark

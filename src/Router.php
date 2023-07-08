@@ -1,30 +1,43 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router;
 
-use D5WHUB\Extend\Router\Cache\Cache;
+use D5WHUB\Extend\Router\Cache\CacheInterface;
 use D5WHUB\Extend\Router\Exception\RuntimeException;
 use D5WHUB\Extend\Router\Exception\SyntaxException;
 
 class Router
 {
-    private Manager $manager;
+    /**
+     * @var Manager
+     */
+    private $manager;
 
-    public function __construct(Cache|null $cache = null)
+    /**
+     * @param CacheInterface|null $cache
+     * @throws RuntimeException
+     */
+    public function __construct($cache = null)
     {
+        if ($cache !== null && !($cache instanceof CacheInterface)) {
+            throw new RuntimeException('Invalid cache instance', 500);
+        }
+
         $this->manager = new Manager($cache);
     }
 
     /**
+     * @param string $key
+     * @param string $pattern
+     * @return $this
      * @throws SyntaxException
      */
-    public function addFilter(string $key, string $pattern): self
+    public function addFilter($key, $pattern)
     {
         $this->manager->addFilter($key, $pattern);
         return $this;
@@ -32,88 +45,123 @@ class Router
 
     /**
      * @param string|string[] $httpMethod
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function addRoute(string|array $httpMethod, string $route, string|callable|array ...$middleware): self
+    public function addRoute($httpMethod, $route, ...$middleware)
     {
         $this->manager->addRoute($httpMethod, $route, ...$middleware);
         return $this;
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function any(string $route, string|callable|array ...$middleware): self
+    public function any($route, ...$middleware)
     {
         return $this->addRoute('ANY', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function get(string $route, string|callable|array ...$middleware): self
+    public function get($route, ...$middleware)
     {
         return $this->addRoute('GET', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function post(string $route, string|callable|array ...$middleware): self
+    public function post($route, ...$middleware)
     {
         return $this->addRoute('POST', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function put(string $route, string|callable|array ...$middleware): self
+    public function put($route, ...$middleware)
     {
         return $this->addRoute('PUT', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function patch(string $route, string|callable|array ...$middleware): self
+    public function patch($route, ...$middleware)
     {
         return $this->addRoute('PATCH', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function delete(string $route, string|callable|array ...$middleware): self
+    public function delete($route, ...$middleware)
     {
         return $this->addRoute('DELETE', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function options(string $route, string|callable|array ...$middleware): self
+    public function options($route, ...$middleware)
     {
         return $this->addRoute('OPTIONS', $route, ...$middleware);
     }
 
     /**
+     * @param string $route
+     * @param callable|array|string ...$middleware
+     * @return $this
      * @throws SyntaxException
      */
-    public function head(string $route, string|callable|array ...$middleware): self
+    public function head($route, ...$middleware)
     {
         return $this->addRoute('HEAD', $route, ...$middleware);
     }
 
-    public function friendly(string $friendly, string $route): self
+    /**
+     * @param string $friendly
+     * @param string $route
+     * @return $this
+     */
+    public function friendly($friendly, $route)
     {
         $this->manager->addFriendly($friendly, $route);
         return $this;
     }
 
     /**
+     * @param string $httpMethod
+     * @param string $route
+     * @return Context
      * @throws RuntimeException
      */
-    public function match(string $httpMethod, string $route): Context|false
+    public function match($httpMethod, $route)
     {
         return $this->manager->match($httpMethod, $route);
     }

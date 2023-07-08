@@ -1,40 +1,51 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router;
 
-use D5WHUB\Extend\Router\Cache\Cache;
+use D5WHUB\Extend\Router\Cache\CacheInterface;
 use D5WHUB\Extend\Router\Exception\RuntimeException;
 use D5WHUB\Extend\Router\Exception\SyntaxException;
+use D5WHUB\Extend\Router\Manager\Constants;
 use D5WHUB\Extend\Router\Manager\Matcher;
 use D5WHUB\Extend\Router\Manager\Parser;
 use D5WHUB\Extend\Router\Manager\RouteCollection;
 
-class Manager
+class Manager extends Constants
 {
     use Matcher;
     use Parser;
 
     /**
-     * @var string[]
+     * @var CacheInterface|null
      */
-    private array $friendlyCollection = [];
+    private $cache;
 
     /**
      * @var string[]
      */
-    private array $filterCollection = [];
+    private $friendlyCollection = [];
 
-    private RouteCollection $routeCollection;
+    /**
+     * @var string[]
+     */
+    private $filterCollection = [];
 
-    public function __construct(
-        private readonly Cache|null $cache = null
-    ) {
+    /**
+     * @var RouteCollection
+     */
+    private $routeCollection;
+
+    /**
+     * @param CacheInterface|null $cache
+     */
+    public function __construct($cache = null)
+    {
+        $this->cache = $cache;
         $this->routeCollection = new RouteCollection();
 
         $this->filterCollection['*'] = '[^\/]+'; // default
@@ -50,29 +61,39 @@ class Manager
     }
 
     /**
+     * @param string $key
+     * @param string $pattern
+     * @return void
      * @throws SyntaxException
      */
-    public function addFilter(string $key, string $pattern): void
+    public function addFilter($key, $pattern)
     {
-        [$key, $pattern] = $this->parseFilter($key, $pattern);
-
+        list($key, $pattern) = $this->parseFilter($key, $pattern);
         $this->filterCollection[$key] = $pattern;
     }
 
-    public function addFriendly(string $friendly, string $uri): void
+    /**
+     * @param string $friendly
+     * @param string $uri
+     * @return void
+     */
+    public function addFriendly($friendly, $uri)
     {
         $this->friendlyCollection[$this->parseUri($friendly)] = $this->parseUri($uri);
     }
 
     /**
+     * @param array|string $httpMethod
+     * @param string $route
+     * @param array|callable|string ...$middleware
+     * @return void
      * @throws SyntaxException
      * @noinspection PhpDocMissingThrowsInspection PhpUnhandledExceptionInspection
      */
-    public function addRoute(string|array $httpMethod, string $route, array|callable|string ...$middleware): void
+    public function addRoute($httpMethod, $route, ...$middleware)
     {
         $httpMethods = $this->parseHttpMethods($httpMethod);
-
-        [$route, $pattern, $paramNames, $static, $words] = $this->parseRoute($route);
+        list($route, $pattern, $paramNames, $static, $words) = $this->parseRoute($route);
 
         $this->routeCollection->add(
             $httpMethods,
@@ -86,13 +107,15 @@ class Manager
     }
 
     /**
+     * @param string $httpMethod
+     * @param string $uri
+     * @return Context
      * @throws RuntimeException
      * @noinspection PhpDocMissingThrowsInspection PhpUnhandledExceptionInspection
      */
-    public function match(string $httpMethod, string $uri): Context
+    public function match($httpMethod, $uri)
     {
         $httpMethod = $this->parseHttpMethods($httpMethod, 400)[0];
-
         return $this->matchRoute($httpMethod, $uri);
     }
 }

@@ -1,4 +1,4 @@
-# Very elegant, fast and powerful router for PHP 8.2
+# Very elegant, fast and powerful router for PHP
 [![Latest Stable Version](https://poser.pugx.org/d5whub/extend-router/v/stable)](https://packagist.org/packages/d5whub/extend-router)
 [![PHP Version Require](http://poser.pugx.org/d5whub/extend-router/require/php)](https://packagist.org/packages/d5whub/extend-router)
 [![Monthly Downloads](https://poser.pugx.org/d5whub/extend-router/d/monthly)](https://packagist.org/packages/d5whub/extend-router)
@@ -10,7 +10,8 @@ Indexing by words tree and regex marked, this router is very elegant, fast and p
 ---
 
 ## Benchmark
-Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).
+Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchmark.md).\
+Tested in PHP ```5.6``` ```7.4``` ```8.1``` ```8.2```
 
 ---
 

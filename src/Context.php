@@ -1,10 +1,9 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
-
-declare(strict_types=1);
 
 namespace D5WHUB\Extend\Router;
 
@@ -20,21 +19,30 @@ class Context
     use Caller;
     use Parser;
 
-    public readonly Current $current;
+    /**
+     * @var Current
+     */
+    public $current;
 
-    public readonly Header $header;
+    /**
+     * @var Header
+     */
+    public $header;
 
     /**
      * @var mixed Partial result
      */
-    public mixed $result = null;
+    public $result = null;
 
     /**
      * @var mixed Persist execution data
      */
-    private mixed $data = null;
+    private $data = null;
 
-    private readonly array $middlewares;
+    /**
+     * @var array
+     */
+    private $middlewares;
 
     /**
      * @throws RuntimeException
@@ -48,9 +56,10 @@ class Context
     }
 
     /**
+     * @return $this
      * @throws RuntimeException
      */
-    public function execute(): self
+    public function execute()
     {
         if ($this->header->state !== ContextState::PENDING || !count($this->middlewares)) {
             return $this;
@@ -91,13 +100,19 @@ class Context
         return $this;
     }
 
-    public function stop(): self
+    /**
+     * @return $this
+     */
+    public function stop()
     {
         $this->header->state = ContextState::STOPPED;
         return $this;
     }
 
-    public function reset(): self
+    /**
+     * @return $this
+     */
+    public function reset()
     {
         $this->header->cursor = -1;
         $this->header->state = ContextState::PENDING;
@@ -114,17 +129,31 @@ class Context
         return $this;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function get($key, $default = null)
     {
-        return $this->data[$key] ?? $default;
+        return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
 
-    public function has(string $key): bool
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function has($key)
     {
         return isset($this->data[$key]);
     }
 
-    public function set(string $key, mixed $value): self
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function set($key, $value)
     {
         $this->data[$key] = $value;
         return $this;

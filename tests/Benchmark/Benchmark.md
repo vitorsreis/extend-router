@@ -15,19 +15,24 @@
 
 ---
 
-## Install and execute
+## Requirements
+- PHP 8.2 or higher
+
+## Install dependencies
 
 ##### On folder `tests/Benchmark`, run:
 ```shell
 composer install --ignore-platform-reqs
 ```
 
-##### Benchmark on console, go to folder `tests/Benchmark` and run:
+## Run benchmark
+
+##### Opt 1: Benchmark on console, go to folder `tests/Benchmark` and run:
 ```shell
 php benchmark-execute.php
 ```
 
-##### Benchmark on browser, go to folder `tests/Benchmark` and run:
+##### Opt 2: Benchmark on browser, go to folder `tests/Benchmark` and run:
 ```shell
 php -S 127.0.0.1:80
 start http://127.0.0.1:80/benchmark-execute.php
@@ -35,12 +40,12 @@ start http://127.0.0.1:80/benchmark-execute.php
 
 ---
 
-## Average results
-|                                   Library | Time               | Difference                       |
-|------------------------------------------:|:-------------------|----------------------------------|
-|          **D5WHub Extend Router (3.0.1)** | **0.00015154839s** | **baseline**                     |
-|      FastRoute (nikic/fast-route - 1.3.0) | 0.00024784088s     | 63.5% slower (+0.00009629250s)   |
-|           Pux PHP (corneltek/pux - 1.6.0) | 0.00081560135s     | 438.2% slower (+0.00066405296s)  |
-| Symfony Routing (symfony/routing - 6.2.8) | 0.00202444553s     | 1235.8% slower (+0.00187289715s) |
-|           Klein.php (klein/klein - 2.1.2) | 0.00907448292s     | 5887.8% slower (+0.00892293453s) |
-|         Aura Router (aura/router - 3.1.0) | 0.01434703827s     | 9367% slower (+0.01419548988s)   |
+## Matching random 100 times, 3000 routes with 5 variables
+|                                   Library | Time               | Difference                        |
+|------------------------------------------:|:-------------------|-----------------------------------|
+|          **D5WHub Extend Router (4.0.0)** | **0.00013368130s** | **baseline**                      |
+|      FastRoute (nikic/fast-route - 1.3.0) | 0.00046172142s     | 245.4% slower (+0.00032804012s)   |
+|           Pux PHP (corneltek/pux - 1.6.0) | 0.00219396353s     | 1541.2% slower (+0.00206028223s)  |
+| Symfony Routing (symfony/routing - 6.3.1) | 0.00475644588s     | 3458% slower (+0.00462276459s)    |
+|           Klein.php (klein/klein - 2.1.2) | 0.02066325426s     | 15357.1% slower (+0.02052957296s) |
+|         Aura Router (aura/router - 3.3.0) | 0.04257794857s     | 31750.3% slower (+0.04244426727s) |

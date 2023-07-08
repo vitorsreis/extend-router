@@ -1,10 +1,9 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
-
-declare(strict_types=1);
 
 namespace D5WHUB\Extend\Router\Manager;
 
@@ -13,14 +12,13 @@ use D5WHUB\Extend\Router\Exception\RuntimeException;
 
 trait Matcher
 {
-    private const INDEXES_PATTERN_MAX_CHUCK = 100;
-
-    private const INDEXER_PATTERN_MAX_LENGTH = 10_000;
-
     /**
+     * @param string $httpMethod
+     * @param string $uri
+     * @return Context
      * @throws RuntimeException
      */
-    private function matchRoute(string $httpMethod, string $uri): Context
+    private function matchRoute($httpMethod, $uri)
     {
         $uri = preg_quote($this->parseUri($uri), '~');
         $friendly = null;
@@ -35,7 +33,7 @@ trait Matcher
         $resultMethodNotAllowed = false;
 
         $cacheKey = "match~$httpMethod:$uri";
-        if ($this->cache?->has($cacheKey)) {
+        if (!empty($this->cache) && $this->cache->has($cacheKey)) {
             $indexes = $this->cache->get($cacheKey);
             if ($indexes === 404 || $indexes === 405) {
                 $resultMethodNotAllowed = $indexes === 405;
@@ -51,7 +49,9 @@ trait Matcher
             foreach ($indexes as $index => $paramValues) {
                 $collection = array_filter(
                     $this->routeCollection->get($index),
-                    static fn($i) => in_array($httpMethod, $i['httpMethod']) || in_array('ANY', $i['httpMethod'])
+                    static function ($i) use ($httpMethod) {
+                        return in_array($httpMethod, $i['httpMethod']) || in_array('ANY', $i['httpMethod']);
+                    }
                 );
 
                 if (empty($collection)) {
@@ -62,7 +62,7 @@ trait Matcher
                 foreach ($collection as $route) {
                     $params = [];
                     foreach ($route['paramNames'] as $pos => $name) {
-                        $params[$name] = $paramValues["A$pos"] ?? null;
+                        $params[$name] = isset($paramValues["A$pos"]) ? $paramValues["A$pos"] : null;
                     }
 
                     $current = [
@@ -80,25 +80,31 @@ trait Matcher
             }
         }
 
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+
         if (empty($result)) {
             $result = $resultMethodNotAllowed ? 405 : 404;
-            $this->cache?->set($cacheKey, $result);
+            empty($this->cache) ?: $this->cache->set($cacheKey, $result);
         } else {
-            $this->cache?->set($cacheKey, $indexes);
+            empty($this->cache) ?: $this->cache->set($cacheKey, $indexes);
         }
 
-        return match ($result) {
-            404 => throw new RuntimeException("Route \"$uri\" not found!", 404),
-            405 => throw new RuntimeException("Method \"$httpMethod\" not allowed for route \"$uri\"!", 405),
-            default => new Context($result)
-        };
+        switch ($result) {
+            case 404:
+                throw new RuntimeException("Route \"$uri\" not found!", 404);
+            case 405:
+                throw new RuntimeException("Method \"$httpMethod\" not allowed for route \"$uri\"!", 405);
+            default:
+                return new Context($result);
+        }
     }
 
     /**
      * @param string $uri
      * @return string[] index => paramValues
      */
-    private function indexes(string $uri): array
+    private function indexes($uri)
     {
         $result = [];
 
@@ -108,14 +114,24 @@ trait Matcher
         return $result;
     }
 
-    private function indexesStatic(string $uri, array &$result): void
+    /**
+     * @param string $uri
+     * @param array &$result
+     * @return void
+     */
+    private function indexesStatic($uri, &$result)
     {
         if (isset($this->routeCollection->staticIndexes[$uri])) {
             $result[$this->routeCollection->staticIndexes[$uri]] = [];
         }
     }
 
-    private function indexesVariable(string $uri, array &$result): void
+    /**
+     * @param string $uri
+     * @param array &$result
+     * @return void
+     */
+    private function indexesVariable($uri, &$result)
     {
         if (empty($this->routeCollection->variableIndexes)) {
             return;
@@ -135,69 +151,92 @@ trait Matcher
         $this->indexesMasked($uri, $result, $indexes);
     }
 
-    private function indexesWord(array $candidates, array $words, bool $is_joker, bool $is_variable): array
+    /**
+     * @param array $candidates
+     * @param array $words
+     * @param bool $is_joker
+     * @param bool $is_variable
+     * @return array
+     */
+    private function indexesWord($candidates, $words, $is_joker, $is_variable)
     {
         if (empty($candidates)) {
             return [];
         }
 
         if (empty($words)) {
-            return $candidates['$'] ?? [];
+            return isset($candidates['$']) ? $candidates['$'] : [];
         }
 
         $word = array_shift($words);
 
         $indexes = [];
 
-        if (!empty($candidates['*']) && $match = $this->indexesWord(
-            $candidates['*'],
-            $words,
-            true,
-            false
-        )) {
-            $indexes = [...$indexes, ...$match];
+        if (
+            !empty($candidates['*']) && $match = $this->indexesWord(
+                $candidates['*'],
+                $words,
+                true,
+                false
+            )
+        ) {
+            $indexes = array_merge($indexes, $match);
         }
 
-        if ($word !== '/' && !empty($candidates[':']) && $match = $this->indexesWord(
-            $candidates[':'],
-            $words,
-            false,
-            true
-        )) {
-            $indexes = [...$indexes, ...$match];
+        if (
+            $word !== '/' && !empty($candidates[':']) && $match = $this->indexesWord(
+                $candidates[':'],
+                $words,
+                false,
+                true
+            )
+        ) {
+            $indexes = array_merge($indexes, $match);
         }
 
-        if ($word !== '/' && $is_variable && $match = $this->indexesWord(
-            $candidates,
-            $words,
-            false,
-            true
-        )) {
-            $indexes = [...$indexes, ...$match];
+        if (
+            $word !== '/' && $is_variable && $match = $this->indexesWord(
+                $candidates,
+                $words,
+                false,
+                true
+            )
+        ) {
+            $indexes = array_merge($indexes, $match);
         }
 
-        if ($is_joker && $match = $this->indexesWord(
-            $candidates,
-            $words,
-            true,
-            false
-        )) {
-            $indexes = [...$indexes, ...$match];
+        if (
+            $is_joker && $match = $this->indexesWord(
+                $candidates,
+                $words,
+                true,
+                false
+            )
+        ) {
+            $indexes = array_merge($indexes, $match);
         }
 
-        if (!empty($candidates[$word]) && $match = $this->indexesWord(
-            $candidates[$word],
-            $words,
-            false,
-            false
-        )) {
-            $indexes = [...$indexes, ...$match];
+        if (
+            !empty($candidates[$word]) && $match = $this->indexesWord(
+                $candidates[$word],
+                $words,
+                false,
+                false
+            )
+        ) {
+            $indexes = array_merge($indexes, $match);
         }
 
         return $indexes;
     }
 
-    private function indexesMasked(string $uri, array &$result, array $indexes): void
+    /**
+     * @param string $uri
+     * @param array &$result
+     * @param array $indexes
+     * @return void
+     */
+    private function indexesMasked($uri, &$result, $indexes)
     {
         $cursor = 0;
         $total = count($indexes);

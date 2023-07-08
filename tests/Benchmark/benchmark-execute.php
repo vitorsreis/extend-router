@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
@@ -17,7 +18,7 @@ $setting = [
     'num_random' => 100,
 
     // Total routes added to test
-    'num_routes' => 1000,
+    'num_routes' => 3000,
 
     // Total variables added to routes
     'num_variables' => 5,

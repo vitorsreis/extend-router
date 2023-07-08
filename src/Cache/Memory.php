@@ -1,28 +1,44 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router\Cache;
 
-class Memory implements Cache
+class Memory implements CacheInterface
 {
-    private array $memory = [];
+    /**
+     * @var array
+     */
+    private $memory = [];
 
-    public function get(string $key, mixed $default = null): mixed
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function get($key, $default = null)
     {
-        return $this->memory[$key] ?? $default;
+        return isset($this->memory[$key]) ? $this->memory[$key] : $default;
     }
 
-    public function has(string $key): bool
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function has($key)
     {
         return array_key_exists($key, $this->memory);
     }
 
-    public function set(string $key, mixed $value): void
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function set($key, $value)
     {
         $this->memory[$key] = $value;
     }

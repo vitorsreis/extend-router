@@ -1,33 +1,45 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router\Context;
 
 use D5WHUB\Extend\Router\Exception\RuntimeException;
+use ReflectionClass;
+use ReflectionException;
 
 trait Caller
 {
     /**
+     * @param array|callable|string $callable
+     * @param array $params
+     * @param array|null $construct
+     * @return mixed
      * @throws RuntimeException
      */
-    private function call(array|callable|string $callable, array $params, array|null $construct): mixed
+    private function call($callable, $params, $construct)
     {
         if (!is_null($construct)) {
-            $callable[0] = new $callable[0](...$this->populate($construct));
+            try {
+                $callable[0] = (new ReflectionClass($callable[0]))
+                    ->newInstanceArgs($this->populate($construct));
+            } catch (ReflectionException $e) {
+                throw new RuntimeException($e->getMessage(), 500);
+            }
         }
 
         return call_user_func_array($callable, $this->populate($params));
     }
 
     /**
+     * @param array $params
+     * @return array
      * @throws RuntimeException
      */
-    private function populate(array $params): array
+    private function populate($params)
     {
         $result = [];
 

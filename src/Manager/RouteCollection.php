@@ -1,44 +1,51 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router\Manager;
 
 class RouteCollection
 {
-    private array $routeCollection = [];
+    /**
+     * @var array
+     */
+    private $routeCollection = [];
 
-    private int $index = 0;
+    /**
+     * @var int
+     */
+    private $index = 0;
 
     /**
      * @var int[]
      */
-    public array $staticIndexes = [];
+    public $staticIndexes = [];
 
     /**
      * @var int[]
      */
-    public array $variableIndexes = [];
+    public $variableIndexes = [];
 
-    public array $variableWords = [];
+    /**
+     * @var array
+     */
+    public $variableWords = [];
 
     /**
      * @param string[] $httpMethod
+     * @param string $route
+     * @param string $pattern
      * @param string[] $paramNames
+     * @param bool $static
+     * @param array $words
+     * @param array $middlewares
+     * @return $this
      */
-    public function add(
-        array $httpMethod,
-        string $route,
-        string $pattern,
-        array $paramNames,
-        bool $static,
-        array $words,
-        array $middlewares
-    ): self {
+    public function add($httpMethod, $route, $pattern, $paramNames, $static, $words, $middlewares)
+    {
         $index = $static
             ? $this->addStatic($route)
             : $this->addVariable($pattern, $words);
@@ -55,31 +62,48 @@ class RouteCollection
         return $this;
     }
 
-    private function addStatic(string $route): int
+    /**
+     * @param string $route
+     * @return int
+     */
+    private function addStatic($route)
     {
-        return $this->staticIndexes[$route] = $this->staticIndexes[$route] ?? $this->index++;
+        return $this->staticIndexes[$route] = isset($this->staticIndexes[$route])
+            ? $this->staticIndexes[$route]
+            : $this->index++;
     }
 
-    private function addVariable(string $pattern, array $words): int
+    /**
+     * @param string $pattern
+     * @param array $words
+     * @return int
+     */
+    private function addVariable($pattern, $words)
     {
         $current = &$this->variableWords;
         foreach ($words as $word) {
             $current = &$current[$word];
         }
 
-        $this->variableIndexes[$pattern] = $this->variableIndexes[$pattern] ?? $this->index++;
+        $this->variableIndexes[$pattern] = isset($this->variableIndexes[$pattern])
+            ? $this->variableIndexes[$pattern]
+            : $this->index++;
 
         $current['$'][] = $this->variableIndexes[$pattern];
 
         return $this->variableIndexes[$pattern];
     }
 
-    public function count(): int
+    /**
+     * @return int
+     */
+    public function count()
     {
         return $this->index;
     }
 
     /**
+     * @param int $index
      * @return null|array{
      *     httpMethod:string[],
      *     route:string,
@@ -89,8 +113,8 @@ class RouteCollection
      *     middlewares:array
      * }[]
      */
-    public function get(int $index): array|null
+    public function get($index)
     {
-        return $this->routeCollection[$index] ?? null;
+        return isset($this->routeCollection[$index]) ? $this->routeCollection[$index] : null;
     }
 }

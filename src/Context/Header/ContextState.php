@@ -1,17 +1,16 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router\Context\Header;
 
-enum ContextState: int
+class ContextState
 {
-    case PENDING = 0;
-    case RUNNING = 2;
-    case COMPLETED = 3;
-    case STOPPED = 4;
+    const PENDING = 0;
+    const RUNNING = 2;
+    const COMPLETED = 3;
+    const STOPPED = 4;
 }

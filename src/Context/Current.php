@@ -1,22 +1,36 @@
 <?php
+
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-declare(strict_types=1);
-
 namespace D5WHUB\Extend\Router\Context;
 
 class Current
 {
-    public int|null $route;
+    /**
+     * @var int|null
+     */
+    public $route;
 
-    public string|null $httpMethod;
+    /**
+     * @var string|null
+     */
+    public $httpMethod;
 
-    public string|null $uri;
+    /**
+     * @var string|null
+     */
+    public $uri;
 
-    public string|null $friendly;
+    /**
+     * @var string|null
+     */
+    public $friendly;
 
-    public object|null $params;
+    /**
+     * @var object|null
+     */
+    public $params;
 }
