@@ -26,8 +26,8 @@ use D5WHUB\Extend\Router\Router;
 use D5WHUB\Extend\Router\Cache\Memory;
 
 $router = new Router(new Memory());
-$router->get('/', function () { echo "hello word" });
-$router->get('/product/:id[d]', function ($id) { echo "page product $id" });    
+$router->get('/', function () { echo "hello word"; });
+$router->get('/product/:id[d]', function ($id) { echo "page product $id"; });    
 $router->match('GET', '/product/100')->execute(); // output: "page product 100"
 ```
 
@@ -36,9 +36,9 @@ $router->match('GET', '/product/100')->execute(); // output: "page product 100"
 ### Context param
 Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
 ```php
-$router->get('/aaa', function ($context) { });
-$router->any('/aaa', function (mixed $context) { });
-$router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { });
+$router->get('/aaa', function ($context) { ... });
+$router->any('/aaa', function (mixed $context) { ... });
+$router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { ... });
 ```
 
 ---
@@ -46,7 +46,7 @@ $router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { });
 ### Friendly uris
 You can add friendly url to redirect to specific routes:
 ```php
-$router->post('/product/:id[d]', function ($id) { echo "save product $id" });
+$router->post('/product/:id[d]', function ($id) { echo "save product $id"; });
 $router->friendly('/iphone', '/product/100');
 $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 ```
@@ -57,8 +57,8 @@ $router->match('POST', '/iphone')->execute(); // output: "save product 100"
 Filters are used to add regex to route variables in a nicer and cleaner way.
 
 ```php
-$router->get('/:var1[09]', fn($var1) => "VAR1_FILTER[09] : $var1");
-$router->get('/:var1[az]', fn($var1) => "VAR1_FILTER[az] : $var1");
+$router->get('/:var1[09]', function ($var1) { return "VAR1_FILTER[09] : $var1"; });
+$router->get('/:var1[az]', function ($var1) { return "VAR1_FILTER[az] : $var1"; });
 
 echo $router->match('GET', '/111')->execute()->result; // output: "VAR1_FILTER[09] : 111"
 echo $router->match('GET', '/aaa')->execute()->result; // output: "VAR1_FILTER[az] : aaa"
@@ -66,8 +66,8 @@ echo $router->match('GET', '/aaa')->execute()->result; // output: "VAR1_FILTER[a
 
 You can use loose filter in routes:
 ```php
-$router->get('/[09]', fn() => "LOOSE_FILTER[09]");
-$router->get('/[az]', fn() => "LOOSE_FILTER[az]");
+$router->get('/[09]', function () { return "LOOSE_FILTER[09]"; });
+$router->get('/[az]', function () { return "LOOSE_FILTER[az]"; });
 
 echo $router->match('GET', '/111')->execute()->result; // output: "LOOSE_FILTER[09]"
 echo $router->match('GET', '/aaa')->execute()->result; // output: "LOOSE_FILTER[az]"
@@ -76,10 +76,10 @@ echo $router->match('GET', '/aaa')->execute()->result; // output: "LOOSE_FILTER[
 You can add custom filters:
 ```php
 $router->addFilter('only_numeric', '\d+')
-$router->get('/:var1[only_numeric]', fn() => 'CUSTOM_VAR1_FILTER');
+$router->get('/:var1[only_numeric]', function () { return 'CUSTOM_VAR1_FILTER'; });
 
 $router->addFilter('w10', '\w{10}')
-$router->get('/[w10]', fn() => 'CUSTOM_LOOSE_FILTER');
+$router->get('/[w10]', function () { return 'CUSTOM_LOOSE_FILTER'; });
 ```
 
 Below are pre-registered filters:
@@ -184,7 +184,7 @@ $router->any('/:var1/:var2', static function ($var1, $var2, $context) { ... });
 
 #--------------------------------------------------
 
-// by arrow function
+// by arrow function, PHP 7.4+
 $router->any('/:var1/:var2', fn($var1, $var2, $context) => { ... });
 $router->any('/:var1/:var2', static fn($var1, $var2, $context) => { ... });
 
@@ -248,7 +248,7 @@ $router->any('/:var1/:var2', $ddd);
 
 #--------------------------------------------------
 
-// by anonymous class
+// by anonymous class, PHP 7+
 $router->any('/:var1/:var2', new class {
     public function __invoke($var1, $var2, $context) { ... }
 });

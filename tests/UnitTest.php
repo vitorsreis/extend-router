@@ -440,7 +440,7 @@ class UnitTest extends TestCase
         $this->expectExceptionCode(500);
         $this->expectExceptionMessage(
             "Required argument \"var1\" for invoke \"D5WHUB\\Test\\Extend\\Router\\requiredArgumentError\"!"
-        ); // phpcs:ignore
+        );
 
         (new Router())
             ->get('/:var2', '\\D5WHUB\\Test\\Extend\\Router\\requiredArgumentError')
