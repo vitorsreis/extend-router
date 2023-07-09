@@ -26,12 +26,12 @@ class Manager extends Constants
     private $cache;
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     private $friendlyCollection = [];
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     private $filterCollection = [];
 

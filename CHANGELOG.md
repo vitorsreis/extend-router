@@ -4,8 +4,10 @@ CHANGELOG
 ## 4.0.0
 - Downgrade for PHP 5.6+ usage
 - PSR-12 code style
-- Throw reserved name "context" from router
+- Add throw reserved name "context" from router
+- Add callback on context execute
 - Fix caller optional params
+- Fix cursor position
 
 ## 3.0.2
 - Performance improvements

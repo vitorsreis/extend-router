@@ -27,8 +27,9 @@ use D5WHUB\Extend\Router\Cache\Memory;
 
 $router = new Router(new Memory());
 $router->get('/', function () { echo "hello word"; });
-$router->get('/product/:id[d]', function ($id) { echo "product $id"; });    
-$router->match('GET', '/product/100')->execute(); // output: "product 100"
+$router->get('/product/:id', function ($id) { echo "product $id"; });    
+$router->match('GET', '/product/100')->execute();
+// output: "product 100"
 ```
 
 ---
@@ -46,9 +47,10 @@ $router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { ... });
 ### Friendly uris
 You can add friendly url to redirect to specific routes:
 ```php
-$router->post('/product/:id[d]', function ($id) { echo "post product $id"; });
+$router->post('/product/:id', function ($id) { echo "post product $id"; });
 $router->friendly('/iphone', '/product/100');
-$router->match('POST', '/iphone')->execute(); // output: "post product 100"
+$router->match('POST', '/iphone')->execute();
+// output: "post product 100"
 ```
 
 ---
@@ -98,17 +100,38 @@ Below are pre-registered filters:
 |            uuid            |            uuid             | \[0-9a-f]{8}-\[0-9a-f]{4}-\[0-5]\[0-9a-f]{3}-\[089ab]\[0-9a-f]{3}-\[0-9a-f]{12} |
 ---
 
-##// Callback with arguments
+### Middleware with arguments
 Route variables and context param are not mandatory in callbacks, so they can be omitted without problems.
 ```php
 $router->any('/:var1/:var2', function () { ... });
 $router->any('/:var1/:var2', function ($var1) { ... });
 $router->any('/:var1/:var2', function ($var2) { ... });
 $router->any('/:var1/:var2', function ($context) { ... });
+$router->any('/:var1/:var2', function (D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2) { ... });
 $router->any('/:var1/:var2', function ($var1, $context) { ... });
+$router->any('/:var1/:var2', function ($var1, D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var2, $context) { ... });
+$router->any('/:var1/:var2', function ($var2, D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
+$router->any('/:var1/:var2', function ($var1, $var2, D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+```
+
+---
+
+### Execute with callback
+You can run receiving callbacks every middleware run with current context. 
+```php
+$router->post('/:aa', function ($aa) { return "a1:$aa "; }, function ($aa) { return "a2:$aa "; });
+$router->post('/:bb', function ($bb) { return "bb:$bb "; });
+$router->match('POST', '/99')->execute(function ($context) {
+    // partial result, run 3 times
+    echo '[' .
+            "{$context->header->cursor}/{$context->header->total} " .
+            "{$context->current->httpMethod} {$context->current->route} = $context->result" .
+         '], ';
+});
+// output: "[1/3 POST /:aa = a1:99], [2/3 POST /:aa = a2:99], [3/3 POST /:bb = bb:99], "
 ```
 
 ---
@@ -128,7 +151,8 @@ $context = $router->match('GET', '/aaa')
     ->set('xxx', 5) # 1. Initial value: 5
     ->execute();
 
-echo $context->get('xxx'); // 4. Output value: "30"
+echo $context->get('xxx');
+// output: "30"
 ```
 
 ---
@@ -144,7 +168,8 @@ $router->get('*', function () { echo "5 "; });
 $router->any('*', function () { echo "6 "; });
 $router->get('/:var', function ($var) { echo "7 "; });
 $router->any('/:var', function ($var) { echo "8 "; });
-$router->match('GET', '/aaa')->execute(); // output: "11 12 13 2 3 4 5 6 7 8 "
+$router->match('GET', '/aaa')->execute();
+// output: "11 12 13 2 3 4 5 6 7 8 "
 ```
 
 You can stop the queue using "stop" method of context
@@ -159,7 +184,8 @@ $router->get('*', function () { echo "5 "; });
 $router->any('*', function () { echo "6 "; });
 $router->get('/:var', function ($var) { echo "7 "; });
 $router->any('/:var', function ($var) { echo "8 "; });
-$router->match('GET', '/aaa')->execute(); // output: "11 12 13 2 3 4 "
+$router->match('GET', '/aaa')->execute();
+// output: "11 12 13 2 3 4 "
 ```
 
 ---
@@ -167,13 +193,13 @@ $router->match('GET', '/aaa')->execute(); // output: "11 12 13 2 3 4 "
 ### Supported callback types
 ```php
 // by native function name
-$router->get('/:haystack/:needle', "stripos");
+$router->any('/:haystack/:needle', "stripos");
 
 #--------------------------------------------------
 
 // by function name
 function callback($var1, $var2, $context) { ... }
-$router->get('/:var1/:var2', "callback");
+$router->any('/:var1/:var2', "callback");
 
 #--------------------------------------------------
 
@@ -254,3 +280,26 @@ $router->any('/:var1/:var2', new class {
     public function __invoke($var1, $var2, $context) { ... }
 }); // Call __invoke
 ```
+
+---
+
+### Context methods/properties
+| Property                                   | Description                                                                        |
+|:-------------------------------------------|:-----------------------------------------------------------------------------------|
+| ```$context->current->route```             | Current match middleware route                                                     |
+| ```$context->current->httpMethod```        | Current match middleware http method                                               |
+| ```$context->current->uri```               | Current match middleware uri                                                       |
+| ```$context->current->friendly```          | Current match middleware friendly uri                                              |
+| ```$context->current->params```            | Current match middleware uri variables                                             |
+| ```$context->header->cursor```             | Current execution position on queue middleware                                     |
+| ```$context->header->total```              | Total execution queue middlewares count                                            |
+| ```$context->header->state```              | Current execution state                                                            |
+| ```$context->header->startTime```          | Execution start time                                                               |
+| ```$context->header->endTime```            | Execution end time                                                                 |
+| ```$context->header->elapsedTime```        | Execution time                                                                     |
+| ```$context->result```                     | Partial/Final execution result                                                     |
+| ```$context->execute(?$callback)```        | Start execution, ```$callback``` is optional and available argument ```$context``` |
+| ```$context->stop()```                     | Stop execution                                                                     |
+| ```$context->get($key, $default = null)``` | Get persistent data                                                                |
+| ```$context->set($key, $value)```          | Set persistent data                                                                |
+| ```$context->has($key)```                  | Check if persistent data exists                                                    |

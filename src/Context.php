@@ -56,23 +56,28 @@ class Context
     }
 
     /**
+     * @param callable|array|string|null $callback
      * @return $this
      * @throws RuntimeException
      */
-    public function execute()
+    public function execute($callback = null)
     {
+        if (!is_null($callback)) {
+            $callback = $this->parseMiddlewares([['current' => null, 'callback' => $callback]])[0];
+        }
+
         if ($this->header->state !== ContextState::PENDING || !count($this->middlewares)) {
             return $this;
         }
 
         $this->header->state = ContextState::RUNNING;
-        $this->header->cursor = 0;
+        $this->header->cursor = 1;
         $this->header->startTime = microtime(true);
         $this->header->endTime = null;
         $this->header->elapsedTime = null;
 
-        for (; $this->header->cursor < $this->header->total; $this->header->cursor++) {
-            $middleware = $this->middlewares[$this->header->cursor];
+        for (; $this->header->cursor <= $this->header->total; $this->header->cursor++) {
+            $middleware = $this->middlewares[$this->header->cursor - 1];
 
             $this->current->route = $middleware['current']['route'];
             $this->current->httpMethod = $middleware['current']['httpMethod'];
@@ -85,6 +90,14 @@ class Context
                 $middleware['params'],
                 $middleware['construct']
             );
+
+            if (!is_null($callback)) {
+                $this->call(
+                    $callback['callable'],
+                    [['type' => 'context']],
+                    $callback['construct']
+                );
+            }
 
             if ($this->header->state !== ContextState::RUNNING) {
                 break;
@@ -106,26 +119,6 @@ class Context
     public function stop()
     {
         $this->header->state = ContextState::STOPPED;
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function reset()
-    {
-        $this->header->cursor = -1;
-        $this->header->state = ContextState::PENDING;
-        $this->header->startTime = null;
-        $this->header->endTime = null;
-        $this->header->elapsedTime = null;
-        $this->current->route = null;
-        $this->current->httpMethod = null;
-        $this->current->uri = null;
-        $this->current->friendly = null;
-        $this->current->params = null;
-        $this->data = null;
-        $this->result = null;
         return $this;
     }
 

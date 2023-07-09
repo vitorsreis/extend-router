@@ -10,7 +10,7 @@ namespace D5WHUB\Extend\Router\Cache;
 class Memory implements CacheInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $memory = [];
 

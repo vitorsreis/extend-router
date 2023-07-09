@@ -587,7 +587,7 @@ class UnitTest extends TestCase
     public function testWithMiddlewareByClassStaticMethodString()
     {
         $router = new Router();
-        $router ->get(
+        $router->get(
             '/:var1/:var2',
             "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassStaticMethod::context"
         );
@@ -791,5 +791,21 @@ class UnitTest extends TestCase
         (new Router())->get('/:context', static function () {
             return '';
         });
+    }
+
+    public function testWithExecuteCallback()
+    {
+        $router = new Router();
+        $router->get('/:var1/:var2', static function ($var1, $var2) {
+            return [$var1, $var2];
+        });
+
+        $match = $router->match('GET', '/111/222');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals(666, $match->execute(function ($context) {
+            $context->result = $context->result[0] + $context->result[1] + 333;
+        })->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 }

@@ -20,9 +20,9 @@ trait Caller
      * @return mixed
      * @throws RuntimeException
      */
-    private function call($callable, $params, $construct)
+    private function call(&$callable, $params, $construct)
     {
-        if (!is_null($construct)) {
+        if (!is_null($construct) && is_string($callable[0])) {
             try {
                 $callable[0] = (new ReflectionClass($callable[0]))
                     ->newInstanceArgs($this->populate($construct));
@@ -46,6 +46,8 @@ trait Caller
         foreach ($params as $name => $argument) {
             if ($argument['type'] === 'context') {
                 $result[$name] = $this;
+            } elseif (isset($argument['value'])) {
+                $result[$name] = $argument['value'];
             } elseif (isset($this->current->params->$name)) {
                 $result[$name] = $this->current->params->$name;
             } elseif (array_key_exists('default', $argument)) {
