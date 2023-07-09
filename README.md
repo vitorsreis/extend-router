@@ -37,7 +37,7 @@ $router->match('GET', '/product/100')->execute(); // output: "product 100"
 Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
 ```php
 $router->get('/aaa', function ($context) { ... });
-$router->any('/aaa', function (mixed $context) { ... }); # PHP 8+
+$router->any('/aaa', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
 $router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { ... });
 ```
 
