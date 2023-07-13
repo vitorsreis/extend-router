@@ -23,13 +23,41 @@ composer require "d5whub/extend-router"
 ## Usage
 ```php
 use D5WHUB\Extend\Router\Router;
-use D5WHUB\Extend\Router\Cache\Memory;
 
-$router = new Router(new Memory());
+$router = new Router();
 $router->get('/', function () { echo "hello word"; });
 $router->get('/product/:id', function ($id) { echo "product $id"; });    
 $router->match('GET', '/product/100')->execute();
 // output: "product 100"
+```
+
+---
+
+### With cache
+
+```php
+$cache = new \D5WHUB\Extend\Router\Cache\Memory();
+#$cache = new \D5WHUB\Extend\Router\Cache\Apcu();
+#$cache = new \D5WHUB\Extend\Router\Cache\File();
+#$cache = new \D5WHUB\Extend\Router\Cache\Memcache();
+#$cache = new \D5WHUB\Extend\Router\Cache\Memcached();
+#$cache = new \D5WHUB\Extend\Router\Cache\Redis();
+
+$cache->clear(); # if change routes
+$router = new Router($cache);
+```
+
+---
+
+### Router group
+You can add group of routes:
+```php
+$router->group('/product', function (D5WHUB\Extend\Router\Router $router) {
+    $router->get('/:id', function ($id) { echo "get product $id"; });
+    $router->post('/:id', function ($id) { echo "post product $id"; });
+});
+$router->match('POST', '/product/100')->execute();
+// output: "post product 100"
 ```
 
 ---
@@ -291,12 +319,14 @@ $router->any('/:var1/:var2', new class {
 | ```$context->current->uri```               | Current match middleware uri                                                       |
 | ```$context->current->friendly```          | Current match middleware friendly uri                                              |
 | ```$context->current->params```            | Current match middleware uri variables                                             |
+| ```$context->header->hash```               | Current execution hash                                                             |
 | ```$context->header->cursor```             | Current execution position on queue middleware                                     |
 | ```$context->header->total```              | Total execution queue middlewares count                                            |
 | ```$context->header->state```              | Current execution state                                                            |
 | ```$context->header->startTime```          | Execution start time                                                               |
 | ```$context->header->endTime```            | Execution end time                                                                 |
 | ```$context->header->elapsedTime```        | Execution time                                                                     |
+| ```$context->cached```                     | Execution result is cached                                                         |
 | ```$context->result```                     | Partial/Final execution result                                                     |
 | ```$context->execute(?$callback)```        | Start execution, ```$callback``` is optional and available argument ```$context``` |
 | ```$context->stop()```                     | Stop execution                                                                     |

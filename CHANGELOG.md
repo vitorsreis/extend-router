@@ -1,6 +1,19 @@
 CHANGELOG
 ---
 
+## 4.1.0
+- Add router group
+- Cache improvements
+  - Add execution hash ($context->header->hash)
+  - Add clear() method
+  - Add match result to cache
+  - Add execution result to cache
+  - Add APCU cache
+  - Add File cache
+  - Add Redis cache
+  - Add Memcache cache
+  - Add Memcached cache
+
 ## 4.0.0
 - Downgrade for PHP 5.6+ usage
 - PSR-12 code style

@@ -7,6 +7,7 @@
 
 namespace D5WHUB\Extend\Router;
 
+use D5WHUB\Extend\Router\Cache\CacheInterface;
 use D5WHUB\Extend\Router\Context\Caller;
 use D5WHUB\Extend\Router\Context\Current;
 use D5WHUB\Extend\Router\Context\Header;
@@ -18,6 +19,11 @@ class Context
 {
     use Caller;
     use Parser;
+
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
 
     /**
      * @var Current
@@ -35,6 +41,11 @@ class Context
     public $result = null;
 
     /**
+     * @var bool Result is cached
+     */
+    public $cached = false;
+
+    /**
      * @var mixed Persist execution data
      */
     private $data = null;
@@ -47,11 +58,13 @@ class Context
     /**
      * @throws RuntimeException
      */
-    public function __construct(array $middlewares)
+    public function __construct(array $middlewares, CacheInterface $cache = null)
     {
+        $this->cache = $cache;
         $this->current = new Current();
         $this->header = new Header();
         $this->middlewares = $this->parseMiddlewares($middlewares);
+        $this->header->hash = sha1(serialize(array_column($this->middlewares, 'current')));
         $this->header->total = count($this->middlewares);
     }
 
@@ -67,6 +80,7 @@ class Context
         }
 
         if ($this->header->state !== ContextState::PENDING || !count($this->middlewares)) {
+            $this->cached = true;
             return $this;
         }
 
@@ -75,32 +89,39 @@ class Context
         $this->header->startTime = microtime(true);
         $this->header->endTime = null;
         $this->header->elapsedTime = null;
+        $this->cached = false;
 
-        for (; $this->header->cursor <= $this->header->total; $this->header->cursor++) {
-            $middleware = $this->middlewares[$this->header->cursor - 1];
+        $cacheKey = "execute-{$this->header->hash}";
+        if (!empty($this->cache) && $this->cache->has($cacheKey)) {
+            $this->cached = true;
+            $this->result = $this->cache->get($cacheKey);
+        } else {
+            for (; $this->header->cursor <= $this->header->total; $this->header->cursor++) {
+                $middleware = $this->middlewares[$this->header->cursor - 1];
 
-            $this->current->route = $middleware['current']['route'];
-            $this->current->httpMethod = $middleware['current']['httpMethod'];
-            $this->current->uri = $middleware['current']['uri'];
-            $this->current->friendly = $middleware['current']['friendly'];
-            $this->current->params = (object)$middleware['current']['params'];
+                $this->current->route = $middleware['current']['route'];
+                $this->current->httpMethod = $middleware['current']['httpMethod'];
+                $this->current->uri = $middleware['current']['uri'];
+                $this->current->friendly = $middleware['current']['friendly'];
+                $this->current->params = (object)$middleware['current']['params'];
 
-            $this->result = $this->call(
-                $middleware['callable'],
-                $middleware['params'],
-                $middleware['construct']
-            );
-
-            if (!is_null($callback)) {
-                $this->call(
-                    $callback['callable'],
-                    [['type' => 'context']],
-                    $callback['construct']
+                $this->result = $this->call(
+                    $middleware['callable'],
+                    $middleware['params'],
+                    $middleware['construct']
                 );
-            }
 
-            if ($this->header->state !== ContextState::RUNNING) {
-                break;
+                if (!is_null($callback)) {
+                    $this->call(
+                        $callback['callable'],
+                        [['type' => 'context']],
+                        $callback['construct']
+                    );
+                }
+
+                if ($this->header->state !== ContextState::RUNNING) {
+                    break;
+                }
             }
         }
 
@@ -109,6 +130,7 @@ class Context
         }
         $this->header->endTime = microtime(true);
         $this->header->elapsedTime = $this->header->endTime - $this->header->startTime;
+        empty($this->cache) ?: $this->cache->set($cacheKey, $this->result);
 
         return $this;
     }

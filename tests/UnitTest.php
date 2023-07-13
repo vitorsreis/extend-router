@@ -808,4 +808,38 @@ class UnitTest extends TestCase
         })->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
+
+    public function testRouteGroup()
+    {
+        $router = new Router();
+        $router->group('/group', static function (Router $router) {
+            $router->get('/aaa', static function () {
+                return 111;
+            });
+            $router->get('/bbb', static function () {
+                return 222;
+            });
+        });
+        $router->get('/ccc', static function () {
+            return 333;
+        });
+
+        $match = $router->match('GET', '/group/aaa');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals(111, $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $match = $router->match('GET', '/group/bbb');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals(222, $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $match = $router->match('GET', '/ccc');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals(333, $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+    }
 }

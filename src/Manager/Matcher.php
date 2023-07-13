@@ -32,12 +32,14 @@ trait Matcher
         $result = [];
         $resultMethodNotAllowed = false;
 
-        $cacheKey = "match~$httpMethod:$uri";
+        $cacheKey = "match-" . sha1("$httpMethod:$uri");
         if (!empty($this->cache) && $this->cache->has($cacheKey)) {
-            $indexes = $this->cache->get($cacheKey);
-            if ($indexes === 404 || $indexes === 405) {
-                $resultMethodNotAllowed = $indexes === 405;
+            $cache = $this->cache->get($cacheKey);
+            if ($cache == '404' || $cache == '405') {
+                $resultMethodNotAllowed = $cache == '405';
                 $indexes = [];
+            } else {
+                $indexes = $cache;
             }
         } elseif (!$this->routeCollection->count()) {
             $indexes = [];
@@ -84,19 +86,19 @@ trait Matcher
         ini_set('display_errors', 1);
 
         if (empty($result)) {
-            $result = $resultMethodNotAllowed ? 405 : 404;
+            $result = $resultMethodNotAllowed ? '405' : '404';
             empty($this->cache) ?: $this->cache->set($cacheKey, $result);
         } else {
             empty($this->cache) ?: $this->cache->set($cacheKey, $indexes);
         }
 
         switch ($result) {
-            case 404:
+            case '404':
                 throw new RuntimeException("Route \"$uri\" not found!", 404);
-            case 405:
+            case '405':
                 throw new RuntimeException("Method \"$httpMethod\" not allowed for route \"$uri\"!", 405);
             default:
-                return new Context($result);
+                return new Context($result, $this->cache);
         }
     }
 

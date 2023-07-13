@@ -14,21 +14,33 @@ use D5WHUB\Extend\Router\Exception\SyntaxException;
 class Router
 {
     /**
+     * @var string|null
+     */
+    private $group = '';
+
+    /**
      * @var Manager
      */
     private $manager;
 
     /**
+     * @param string $group
      * @param CacheInterface|null $cache
+     * @param Manager|null $manager
      * @throws RuntimeException
      */
-    public function __construct($cache = null)
+    public function __construct($cache = null, $group = null, $manager = null)
     {
         if ($cache !== null && !($cache instanceof CacheInterface)) {
             throw new RuntimeException('Invalid cache instance', 500);
         }
 
-        $this->manager = new Manager($cache);
+        if ($manager !== null && !($manager instanceof Manager)) {
+            throw new RuntimeException('Invalid manager instance', 500);
+        }
+
+        $this->manager = $manager ?: new Manager($cache);
+        $this->group = $group ?: '';
     }
 
     /**
@@ -52,7 +64,7 @@ class Router
      */
     public function addRoute($httpMethod, $route, ...$middleware)
     {
-        $this->manager->addRoute($httpMethod, $route, ...$middleware);
+        $this->manager->addRoute($httpMethod, $this->group . $route, ...$middleware);
         return $this;
     }
 
@@ -152,6 +164,21 @@ class Router
     public function friendly($friendly, $route)
     {
         $this->manager->addFriendly($friendly, $route);
+        return $this;
+    }
+
+    /**
+     * @param string $route
+     * @param callable $callback fn(Router $router)
+     * @return $this
+     * @throws RuntimeException
+     */
+    public function group($route, $callback)
+    {
+        call_user_func_array(
+            $callback,
+            [new self(null, $this->group . $route, $this->manager)]
+        );
         return $this;
     }
 

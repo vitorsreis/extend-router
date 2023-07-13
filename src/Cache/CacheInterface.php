@@ -28,4 +28,15 @@ interface CacheInterface
      * @return void
      */
     public function set($key, $value);
+
+    /**
+     * @param string $key
+     * @return void
+     */
+    public function del($key);
+
+    /**
+     * @return void
+     */
+    public function clear();
 }

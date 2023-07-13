@@ -3,16 +3,21 @@
 /**
  * This file is part of d5whub extend router
  * @author Vitor Reis <vitor@d5w.com.br>
+ * @noinspection PhpComposerExtensionStubsInspection
  */
 
 namespace D5WHUB\Extend\Router\Cache;
 
-class Memory implements CacheInterface
+use RuntimeException;
+
+class Apcu extends AbstractCache implements CacheInterface
 {
-    /**
-     * @var array<string, mixed>
-     */
-    private $memory = [];
+    public function __construct()
+    {
+        if (!extension_loaded('apcu')) {
+            throw new RuntimeException('Extension APCu not loaded', 500);
+        }
+    }
 
     /**
      * @param string $key
@@ -21,7 +26,13 @@ class Memory implements CacheInterface
      */
     public function get($key, $default = null)
     {
-        return isset($this->memory[$key]) ? $this->memory[$key] : $default;
+        $value = apcu_fetch($key, $success);
+        if ($success === false) {
+            $value = $default;
+        } else {
+            $value = $this->unserialize($value);
+        }
+        return $value;
     }
 
     /**
@@ -30,7 +41,7 @@ class Memory implements CacheInterface
      */
     public function has($key)
     {
-        return array_key_exists($key, $this->memory);
+        return apcu_exists($key);
     }
 
     /**
@@ -40,7 +51,7 @@ class Memory implements CacheInterface
      */
     public function set($key, $value)
     {
-        $this->memory[$key] = $value;
+        ($value = $this->serialize($value)) && apcu_store($key, $value);
     }
 
     /**
@@ -49,7 +60,7 @@ class Memory implements CacheInterface
      */
     public function del($key)
     {
-        unset($this->memory[$key]);
+        apcu_delete($key);
     }
 
     /**
@@ -57,6 +68,6 @@ class Memory implements CacheInterface
      */
     public function clear()
     {
-        $this->memory = [];
+        apcu_clear_cache();
     }
 }

@@ -12,6 +12,11 @@ use D5WHUB\Extend\Router\Context\Header\ContextState;
 class Header
 {
     /**
+     * @var string Execution hash
+     */
+    public $hash = null;
+
+    /**
      * @var int
      */
     public $cursor = -1;
