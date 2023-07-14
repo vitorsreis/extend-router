@@ -140,8 +140,8 @@ trait Matcher
             return;
         }
 
-        $indexes = $this->indexesWord(
-            $this->routeCollection->variableWords,
+        $indexes = $this->indexesTree(
+            $this->routeCollection->variableTree,
             preg_split(
                 self::REGEX_DELIMITER . '(/)' . self::REGEX_DELIMITER,
                 $uri,
@@ -166,7 +166,7 @@ trait Matcher
      * @param bool $is_variable
      * @return array
      */
-    private function indexesWord($candidates, $words, $is_joker, $is_variable)
+    private function indexesTree($candidates, $words, $is_joker, $is_variable)
     {
         if (empty($candidates)) {
             return [];
@@ -181,7 +181,7 @@ trait Matcher
         $indexes = [];
 
         if (
-            !empty($candidates['*']) && $match = $this->indexesWord(
+            !empty($candidates['*']) && $match = $this->indexesTree(
                 $candidates['*'],
                 $words,
                 true,
@@ -192,7 +192,7 @@ trait Matcher
         }
 
         if (
-            $word !== '/' && !empty($candidates[':']) && $match = $this->indexesWord(
+            $word !== '/' && !empty($candidates[':']) && $match = $this->indexesTree(
                 $candidates[':'],
                 $words,
                 false,
@@ -203,7 +203,7 @@ trait Matcher
         }
 
         if (
-            $word !== '/' && $is_variable && $match = $this->indexesWord(
+            $word !== '/' && $is_variable && $match = $this->indexesTree(
                 $candidates,
                 $words,
                 false,
@@ -214,7 +214,7 @@ trait Matcher
         }
 
         if (
-            $is_joker && $match = $this->indexesWord(
+            $is_joker && $match = $this->indexesTree(
                 $candidates,
                 $words,
                 true,
@@ -225,7 +225,7 @@ trait Matcher
         }
 
         if (
-            !empty($candidates[$word]) && $match = $this->indexesWord(
+            !empty($candidates[$word]) && $match = $this->indexesTree(
                 $candidates[$word],
                 $words,
                 false,
@@ -235,7 +235,7 @@ trait Matcher
             $indexes = array_merge($indexes, $match);
         }
 
-        return $indexes;
+        return array_values($indexes);
     }
 
     /**

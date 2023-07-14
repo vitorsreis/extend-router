@@ -32,7 +32,7 @@ class RouteCollection
     /**
      * @var array
      */
-    public $variableWords = [];
+    public $variableTree = [];
 
     /**
      * @param string[] $httpMethod
@@ -80,7 +80,7 @@ class RouteCollection
      */
     private function addVariable($pattern, $words)
     {
-        $current = &$this->variableWords;
+        $current = &$this->variableTree;
         foreach ($words as $word) {
             $current = &$current[$word];
         }
@@ -89,7 +89,7 @@ class RouteCollection
             ? $this->variableIndexes[$pattern]
             : $this->index++;
 
-        $current['$'][] = $this->variableIndexes[$pattern];
+        $current['$'][$this->variableIndexes[$pattern]] = $this->variableIndexes[$pattern];
 
         return $this->variableIndexes[$pattern];
     }
