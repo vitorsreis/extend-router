@@ -43,9 +43,11 @@ class Memcache extends AbstractCache implements CacheInterface
     {
         $value = $this->memcache->get($key);
         if ($value === false) {
-            $value = $default;
+            return $default;
         }
-        return $this->unserialize($value);
+
+        $value = $this->unserialize($value);
+        return $value !== null ? $value : $default;
     }
 
     /**
@@ -64,7 +66,7 @@ class Memcache extends AbstractCache implements CacheInterface
      */
     public function set($key, $value)
     {
-        ($value = $this->serialize($value)) && $this->memcache->set($key, $value);
+        ($value = $this->serialize($value)) !== null && $this->memcache->set($key, $value);
     }
 
     /**

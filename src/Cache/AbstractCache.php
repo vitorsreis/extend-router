@@ -14,7 +14,7 @@ abstract class AbstractCache
     /**
      * Serialize value to string
      * @param mixed $value
-     * @return string
+     * @return string|null
      */
     protected function serialize($value)
     {

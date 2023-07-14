@@ -57,11 +57,10 @@ class File extends AbstractCache implements CacheInterface
         $value = file_get_contents($filename);
         if ($value === false) {
             return $default;
-        } else {
-            $value = $this->unserialize($value);
         }
 
-        return $value;
+        $value = $this->unserialize($value);
+        return $value !== null ? $value : $default;
     }
 
     /**
@@ -80,7 +79,7 @@ class File extends AbstractCache implements CacheInterface
      */
     public function set($key, $value)
     {
-        ($value = $this->serialize($value)) && file_put_contents($this->getFileName($key), serialize($value));
+        ($value = $this->serialize($value)) !== null && file_put_contents($this->getFileName($key), serialize($value));
     }
 
     /**

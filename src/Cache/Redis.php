@@ -56,13 +56,16 @@ class Redis extends AbstractCache implements CacheInterface
     {
         try {
             $value = $this->redis->get($key);
-            if ($value === false) {
-                $value = $default;
-            }
-            return $this->unserialize($value);
         } catch (Exception $e) {
             return $default;
         }
+
+        if ($value === false) {
+            return $default;
+        }
+
+        $value = $this->unserialize($value);
+        return $value !== null ? $value : $default;
     }
 
     /**
@@ -86,7 +89,7 @@ class Redis extends AbstractCache implements CacheInterface
     public function set($key, $value)
     {
         try {
-            ($value = $this->serialize($value)) && $this->redis->set($key, $value);
+            ($value = $this->serialize($value)) !== null && $this->redis->set($key, $value);
         } catch (Exception $e) {
         }
     }

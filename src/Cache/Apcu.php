@@ -28,11 +28,11 @@ class Apcu extends AbstractCache implements CacheInterface
     {
         $value = apcu_fetch($key, $success);
         if ($success === false) {
-            $value = $default;
-        } else {
-            $value = $this->unserialize($value);
+            return $default;
         }
-        return $value;
+
+        $value = $this->unserialize($value);
+        return $value !== null ? $value : $default;
     }
 
     /**
@@ -51,7 +51,7 @@ class Apcu extends AbstractCache implements CacheInterface
      */
     public function set($key, $value)
     {
-        ($value = $this->serialize($value)) && apcu_store($key, $value);
+        ($value = $this->serialize($value)) !== null && apcu_store($key, $value);
     }
 
     /**

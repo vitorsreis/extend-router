@@ -43,9 +43,11 @@ class Memcached extends AbstractCache implements CacheInterface
     {
         $value = $this->memcached->get($key);
         if ($this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
-            $value = $default;
+            return $default;
         }
-        return $this->unserialize($value);
+
+        $value = $this->unserialize($value);
+        return $value !== null ? $value : $default;
     }
 
     /**
@@ -65,7 +67,7 @@ class Memcached extends AbstractCache implements CacheInterface
      */
     public function set($key, $value)
     {
-        ($value = $this->serialize($value)) && $this->memcached->set($key, $value);
+        ($value = $this->serialize($value)) !== null && $this->memcached->set($key, $value);
     }
 
     /**
