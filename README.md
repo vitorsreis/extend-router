@@ -1,7 +1,7 @@
 # Very elegant, fast and powerful router for PHP
 [![Latest Stable Version](https://img.shields.io/packagist/v/d5whub/extend-router?style=flat-square&label=stable&color=2E9DD3)](https://packagist.org/packages/d5whub/extend-router)
 [![PHP Version Require](https://img.shields.io/packagist/dependency-v/d5whub/extend-router/php?style=flat-square&color=777BB3)](https://packagist.org/packages/d5whub/extend-router)
-[![License](https://img.shields.io/packagist/l/d5whub/extend-router?style=flat-square&color=418677)](https://packagist.org/packages/d5whub/extend-router)
+[![License](https://img.shields.io/packagist/l/d5whub/extend-router?style=flat-square&color=418677)](https://github.com/d5whub/extend-router/blob/master/LICENSE)
 [![Total Downloads](https://img.shields.io/packagist/dt/d5whub/extend-router?style=flat-square&color=0476B7)](https://packagist.org/packages/d5whub/extend-router)
 [![Repo Stars](https://img.shields.io/github/stars/d5whub/extend-router?style=social)](https://github.com/d5whub/extend-router)
 

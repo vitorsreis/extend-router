@@ -24,7 +24,7 @@ trait Matcher
      */
     private function matchRoute($httpMethod, $uri)
     {
-        $uri = preg_quote($this->parseUri($uri), self::REGEX_DELIMITER);
+        $uri = $this->parseUri($uri);
         $friendly = null;
 
         # REWRITE FRIENDLY
