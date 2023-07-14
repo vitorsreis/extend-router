@@ -49,7 +49,7 @@ $router = new \D5WHUB\Extend\Router\Router($cache);
 You can use NotFoundException and MethodNotAllowedException in catch:
 ```php
 try {
-    $router->match('POST', '/aaa')->execute();
+    $router->match('POST', '/aaa');
 } catch (\D5WHUB\Extend\Router\Exception\NotFoundException $e) {
     echo "{$e->getCode()}: {$e->getMessage()}"; // output: "404: Route \"/aaa\" not found"
 } catch (\D5WHUB\Extend\Router\Exception\MethodNotAllowedException $e) {
@@ -59,7 +59,7 @@ try {
 Or can use RuntimeException in catch:
 ```php
 try {
-    $router->match('POST', '/aaa')->execute();
+    $router->match('POST', '/aaa');
 } catch (\D5WHUB\Extend\Router\Exception\RuntimeException $e) {
     if (in_array($e->getCode(), [404, 405])) {
         echo "{$e->getCode()}: {$e->getMessage()}";
@@ -159,13 +159,21 @@ $router->any('/:var1/:var2', function () { ... });
 $router->any('/:var1/:var2', function ($var1) { ... });
 $router->any('/:var1/:var2', function ($var2) { ... });
 $router->any('/:var1/:var2', function ($context) { ... });
+$router->any('/:var1/:var2', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
+$router->any('/:var1/:var2', function (\D5WHUB\Extend\Router\Context $context) { ... });
 $router->any('/:var1/:var2', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2) { ... });
 $router->any('/:var1/:var2', function ($var1, $context) { ... });
+$router->any('/:var1/:var2', function ($var1, mixed $context) { ... }); # Explicit mixed type only PHP 8+
+$router->any('/:var1/:var2', function ($var1, \D5WHUB\Extend\Router\Context $context) { ... });
 $router->any('/:var1/:var2', function ($var1, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var2, $context) { ... });
+$router->any('/:var1/:var2', function ($var2, mixed $custom_name_context) { ... }); # Explicit mixed type only PHP 8+
+$router->any('/:var1/:var2', function ($var2, \D5WHUB\Extend\Router\Context $context) { ... });
 $router->any('/:var1/:var2', function ($var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
+$router->any('/:var1/:var2', function ($var1, $var2, mixed $context) { ... }); # Explicit mixed type only PHP 8+
+$router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 ```
 
