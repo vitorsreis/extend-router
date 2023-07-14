@@ -66,7 +66,7 @@ trait Parser
             throw new SyntaxException("Invalid key \"$key\". Use only letters, numbers and underscore", 500);
         }
 
-        $try = self::REGEX_DELIMITER . preg_quote($pattern, self::REGEX_DELIMITER) . self::REGEX_DELIMITER;
+        $try = self::REGEX_DELIMITER . $pattern . self::REGEX_DELIMITER;
         if (!@preg_match($try, '') && preg_last_error() !== PREG_NO_ERROR) {
             throw new SyntaxException("Invalid pattern \"$try\" on filter key \"$key\"", 500);
         }
@@ -128,7 +128,7 @@ trait Parser
                     }
 
                     $static = false;
-                    $pattern .= "(?<A$argCount>{$this->filterCollection[$filterKey]})";
+                    $pattern .= "(?<A$argCount>" . $this->filterCollection[$filterKey] . ")";
                     $paramNames[$argCount] = $paramName;
                     $argCount++;
                 } elseif ($match[0] === '[') {

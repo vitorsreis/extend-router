@@ -844,4 +844,21 @@ class UnitTest extends TestCase
         $this->assertEquals(333, $match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
+
+    public function testVariableCharacters()
+    {
+        $router = new Router();
+        $expect_variable_characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_~:";
+
+        $router->any('/:var1', function ($var1) {
+            return $var1;
+        });
+
+        $match = $router->match('GET', "/$expect_variable_characters");
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals($expect_variable_characters, $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+    }
 }

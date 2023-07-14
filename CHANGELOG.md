@@ -3,6 +3,7 @@ CHANGELOG
 
 ## 4.1.1
 - Fix variable params
+- Fix add filter
 - Performance improvements
   - Fix unique added route index in route collection variable tree
   - Fix match indexes tree
