@@ -9,15 +9,17 @@ namespace D5WHUB\Extend\Router\Manager;
 
 abstract class Constants
 {
-    const REGEX_MATCH = '~(\*|/|:[a-zA-Z_]\w*(?:\[\w*])?|\[\w*\])~';
+    const REGEX_DELIMITER = '~';
 
-    const REGEX_VARIABLE = '~:(\w+)(?:\[(\w*)])?~';
+    const REGEX_MATCH = self::REGEX_DELIMITER . '(\*|/|:[a-zA-Z_]\w*(?:\[\w*])?|\[\w*\])' . self::REGEX_DELIMITER;
 
-    const REGEX_LOOSE_FILTER = '~\[(\w*)]~';
+    const REGEX_VARIABLE = self::REGEX_DELIMITER . ':(\w+)(?:\[(\w*)])?' . self::REGEX_DELIMITER;
+
+    const REGEX_LOOSE_FILTER = self::REGEX_DELIMITER . '\[(\w*)]' . self::REGEX_DELIMITER;
+
+    const REGEX_FILTER_KEY = self::REGEX_DELIMITER . '\W' . self::REGEX_DELIMITER;
 
     const PREG_SPLIT_FLAGS = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE;
-
-    const PATTERN_FILTER_KEY = '~\W~';
 
     const INDEXES_PATTERN_MAX_CHUCK = 100;
 

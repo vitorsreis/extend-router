@@ -8,7 +8,6 @@
 
 namespace D5WHUB\Extend\Router\Cache;
 
-use Exception;
 use RuntimeException;
 
 class Memcached extends AbstractCache implements CacheInterface
@@ -23,7 +22,7 @@ class Memcached extends AbstractCache implements CacheInterface
      * @param int $port
      * @param int $weight
      */
-    public function __construct($host, $port, $weight = 0)
+    public function __construct($host = '127.0.0.1', $port = 11211, $weight = 0)
     {
         if (!extension_loaded('memcached')) {
             throw new RuntimeException('Extension Memcached not loaded', 500);

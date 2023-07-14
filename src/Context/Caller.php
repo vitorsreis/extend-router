@@ -54,7 +54,7 @@ trait Caller
                 $result[$name] = $argument['default'];
             } else {
                 throw new RuntimeException(
-                    sprintf("Required argument \"%s\" for invoke \"%s\"!", $name, $argument['name']),
+                    sprintf("Required argument \"%s\" for invoke \"%s\"", $name, $argument['name']),
                     500
                 );
             }

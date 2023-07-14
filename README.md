@@ -22,10 +22,7 @@ composer require "d5whub/extend-router"
 
 ## Usage
 ```php
-use D5WHUB\Extend\Router\Router;
-
-$router = new Router();
-$router->get('/', function () { echo "hello word"; });
+$router = new \D5WHUB\Extend\Router\Router();
 $router->get('/product/:id', function ($id) { echo "product $id"; });    
 $router->match('GET', '/product/100')->execute();
 // output: "product 100"
@@ -33,18 +30,44 @@ $router->match('GET', '/product/100')->execute();
 
 ---
 
-### With cache
+### Cache
 
 ```php
 $cache = new \D5WHUB\Extend\Router\Cache\Memory();
-#$cache = new \D5WHUB\Extend\Router\Cache\Apcu();
-#$cache = new \D5WHUB\Extend\Router\Cache\File();
-#$cache = new \D5WHUB\Extend\Router\Cache\Memcache();
-#$cache = new \D5WHUB\Extend\Router\Cache\Memcached();
-#$cache = new \D5WHUB\Extend\Router\Cache\Redis();
+// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
+// $cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
+// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
+// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
+// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
 
-$cache->clear(); # if change routes
-$router = new Router($cache);
+$router = new \D5WHUB\Extend\Router\Router($cache);
+```
+
+---
+
+### 404 Not Found and 405 Method Not Allowed
+You can use NotFoundException and MethodNotAllowedException in catch:
+```php
+try {
+    $router->match('POST', '/aaa')->execute();
+} catch (\D5WHUB\Extend\Router\Exception\NotFoundException $e) {
+    echo "{$e->getCode()}: {$e->getMessage()}"; // output: "404: Route \"/aaa\" not found"
+} catch (\D5WHUB\Extend\Router\Exception\MethodNotAllowedException $e) {
+    echo "{$e->getCode()}: {$e->getMessage()}"; // output: "405: Method \"POST\" not allowed for route \"/aaa\""
+}
+```
+Or can use RuntimeException in catch:
+```php
+try {
+    $router->match('POST', '/aaa')->execute();
+} catch (\D5WHUB\Extend\Router\Exception\RuntimeException $e) {
+    if (in_array($e->getCode(), [404, 405])) {
+        echo "{$e->getCode()}: {$e->getMessage()}";
+        // output: "404: Route \"/aaa\" not found" or  "405: Method \"POST\" not allowed for route \"/aaa\""
+    } else {
+        throw $e;
+    }
+}
 ```
 
 ---
@@ -52,7 +75,7 @@ $router = new Router($cache);
 ### Router group
 You can add group of routes:
 ```php
-$router->group('/product', function (D5WHUB\Extend\Router\Router $router) {
+$router->group('/product', function (\D5WHUB\Extend\Router\Router $router) {
     $router->get('/:id', function ($id) { echo "get product $id"; });
     $router->post('/:id', function ($id) { echo "post product $id"; });
 });
@@ -67,7 +90,8 @@ Context contains all information of current execution, use argument with name "$
 ```php
 $router->get('/aaa', function ($context) { ... });
 $router->any('/aaa', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
-$router->get('/a*', function (D5WHUB\Extend\Router\Context $context) { ... });
+$router->get('/a*', function (\D5WHUB\Extend\Router\Context $context) { ... });
+$router->any('/a*', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 ```
 
 ---
@@ -135,14 +159,14 @@ $router->any('/:var1/:var2', function () { ... });
 $router->any('/:var1/:var2', function ($var1) { ... });
 $router->any('/:var1/:var2', function ($var2) { ... });
 $router->any('/:var1/:var2', function ($context) { ... });
-$router->any('/:var1/:var2', function (D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2) { ... });
 $router->any('/:var1/:var2', function ($var1, $context) { ... });
-$router->any('/:var1/:var2', function ($var1, D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function ($var1, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var2, $context) { ... });
-$router->any('/:var1/:var2', function ($var2, D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function ($var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
-$router->any('/:var1/:var2', function ($var1, $var2, D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 ```
 
 ---
@@ -155,9 +179,9 @@ $router->post('/:bb', function ($bb) { return "bb:$bb "; });
 $router->match('POST', '/99')->execute(function ($context) {
     // partial result, run 3 times
     echo '[' .
-            "{$context->header->cursor}/{$context->header->total} " .
-            "{$context->current->httpMethod} {$context->current->route} = $context->result" .
-         '], ';
+        "{$context->header->cursor}/{$context->header->total} " .
+        "{$context->current->httpMethod} {$context->current->route} = $context->result" .
+    '], ';
 });
 // output: "[1/3 POST /:aa = a1:99], [2/3 POST /:aa = a2:99], [3/3 POST /:bb = bb:99], "
 ```
@@ -167,13 +191,11 @@ $router->match('POST', '/99')->execute(function ($context) {
 ### Persisting data
 You can persist data in context so that it is persisted in future callbacks.
 ```php
-use D5WHUB\Extend\Router\Context;
-
-$router->get('/aaa', function (Context $context) {
-    $context->set('xxx', $context->get('xxx', 0) + 10); # 2. Increment value: 15
+$router->get('/aaa', function (\D5WHUB\Extend\Router\Context $context) {
+    $context->set('xxx', $context->get('xxx', 0) + 10); # 2. Increment value: 5 + 10 = 15
 });
-$router->get('/var2', function (Context $context) {
-    $context->set('xxx', $context->get('xxx', 0) + 15); # 3. Increment value: 30
+$router->get('/var2', function (\D5WHUB\Extend\Router\Context $context) {
+    $context->set('xxx', $context->get('xxx', 0) + 15); # 3. Increment value: 15 + 15 = 30
 });
 $context = $router->match('GET', '/aaa')
     ->set('xxx', 5) # 1. Initial value: 5
@@ -202,12 +224,10 @@ $router->match('GET', '/aaa')->execute();
 
 You can stop the queue using "stop" method of context
 ```php
-use D5WHUB\Extend\Router\Context;
-
 $router->get('/aaa', function () { echo "11 "; }, function () { echo "12 "; }, function () { echo "13 "; });
 $router->any('/aaa', function () { echo "2 "; });
 $router->get('/a*', function () { echo "3 "; });
-$router->any('/a*', function (Context $context) { echo "4 "; $context->stop(); });
+$router->any('/a*', function (\D5WHUB\Extend\Router\Context $context) { echo "4 "; $context->stop(); });
 $router->get('*', function () { echo "5 "; });
 $router->any('*', function () { echo "6 "; });
 $router->get('/:var', function ($var) { echo "7 "; });

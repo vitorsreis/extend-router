@@ -62,12 +62,13 @@ trait Parser
      */
     private function parseFilter($key, $pattern)
     {
-        if (preg_match(self::PATTERN_FILTER_KEY, $key)) {
-            throw new SyntaxException("Invalid key \"$key\". Use only letters, numbers and underscore.", 500);
+        if (preg_match(self::REGEX_FILTER_KEY, $key)) {
+            throw new SyntaxException("Invalid key \"$key\". Use only letters, numbers and underscore", 500);
         }
 
-        if (!@preg_match("/$pattern/", '') && preg_last_error() !== PREG_NO_ERROR) {
-            throw new SyntaxException("Invalid pattern \"/$pattern/\" on filter key \"$key\".", 500);
+        $try = self::REGEX_DELIMITER . preg_quote($pattern, self::REGEX_DELIMITER) . self::REGEX_DELIMITER;
+        if (!@preg_match($try, '') && preg_last_error() !== PREG_NO_ERROR) {
+            throw new SyntaxException("Invalid pattern \"$try\" on filter key \"$key\"", 500);
         }
 
         return [$key, $pattern];
@@ -80,11 +81,11 @@ trait Parser
     private function parseUri($uri)
     {
         do {
-            $uri = preg_replace('~\*\*~', '*', $uri, -1, $count);
+            $uri = preg_replace(self::REGEX_DELIMITER . '\*\*' . self::REGEX_DELIMITER, '*', $uri, -1, $count);
         } while ($count);
 
         do {
-            $uri = preg_replace('~//~', '/', $uri, -1, $count);
+            $uri = preg_replace(self::REGEX_DELIMITER . '//' . self::REGEX_DELIMITER, '/', $uri, -1, $count);
         } while ($count);
 
         return rtrim(parse_url($uri, PHP_URL_PATH), '/') ?: '/';
@@ -151,7 +152,7 @@ trait Parser
                     } elseif ($match[0] === '/') {
                         $pattern .= '\/';
                     } else {
-                        $pattern .= preg_quote($match, '~');
+                        $pattern .= preg_quote($match, self::REGEX_DELIMITER);
                     }
                 }
             }
@@ -285,7 +286,7 @@ trait Parser
                 ];
             } elseif ($onlyContext) {
                 throw new RuntimeException(
-                    sprintf("Required argument \"%s\" for invoke \"%s\"!", $param->getName(), $reflection->getName()),
+                    sprintf("Required argument \"%s\" for invoke \"%s\"", $param->getName(), $reflection->getName()),
                     500
                 );
             } else {

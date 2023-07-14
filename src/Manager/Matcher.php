@@ -8,6 +8,8 @@
 namespace D5WHUB\Extend\Router\Manager;
 
 use D5WHUB\Extend\Router\Context;
+use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
+use D5WHUB\Extend\Router\Exception\NotFoundException;
 use D5WHUB\Extend\Router\Exception\RuntimeException;
 
 trait Matcher
@@ -16,11 +18,13 @@ trait Matcher
      * @param string $httpMethod
      * @param string $uri
      * @return Context
+     * @throws MethodNotAllowedException
+     * @throws NotFoundException
      * @throws RuntimeException
      */
     private function matchRoute($httpMethod, $uri)
     {
-        $uri = preg_quote($this->parseUri($uri), '~');
+        $uri = preg_quote($this->parseUri($uri), self::REGEX_DELIMITER);
         $friendly = null;
 
         # REWRITE FRIENDLY
@@ -82,9 +86,6 @@ trait Matcher
             }
         }
 
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-
         if (empty($result)) {
             $result = $resultMethodNotAllowed ? '405' : '404';
             empty($this->cache) ?: $this->cache->set($cacheKey, $result);
@@ -94,9 +95,9 @@ trait Matcher
 
         switch ($result) {
             case '404':
-                throw new RuntimeException("Route \"$uri\" not found!", 404);
+                throw new NotFoundException("Route \"$uri\" not found", 404);
             case '405':
-                throw new RuntimeException("Method \"$httpMethod\" not allowed for route \"$uri\"!", 405);
+                throw new MethodNotAllowedException("Method \"$httpMethod\" not allowed for route \"$uri\"", 405);
             default:
                 return new Context($result, $this->cache);
         }
@@ -141,7 +142,12 @@ trait Matcher
 
         $indexes = $this->indexesWord(
             $this->routeCollection->variableWords,
-            preg_split('~(/)~', $uri, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) ?: [],
+            preg_split(
+                self::REGEX_DELIMITER . '(/)' . self::REGEX_DELIMITER,
+                $uri,
+                -1,
+                PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
+            ) ?: [],
             false,
             false
         );
@@ -259,7 +265,7 @@ trait Matcher
                 $length += $appendLength;
             }
 
-            if (preg_match("~^(?$pattern)$~", $uri, $match)) {
+            if (preg_match(self::REGEX_DELIMITER . "^(?$pattern)$" . self::REGEX_DELIMITER, $uri, $match)) {
                 $result[$indexes[$match['MARK']]] = array_slice($match, 1, -1);
                 $cursor = (int)$match['MARK'] + 1;
             }

@@ -25,7 +25,7 @@ class Redis extends AbstractCache implements CacheInterface
      * @param string|null $password
      * @param int|null $database
      */
-    public function __construct($host, $port, $timeout = 10, $password = null, $database = null)
+    public function __construct($host = '127.0.0.1', $port = 6379, $timeout = 10, $password = null, $database = null)
     {
         if (!extension_loaded('redis')) {
             throw new RuntimeException('Extension Redis not loaded', 500);

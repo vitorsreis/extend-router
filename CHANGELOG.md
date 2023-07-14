@@ -13,6 +13,8 @@ CHANGELOG
   - Add Redis cache
   - Add Memcache cache
   - Add Memcached cache
+- Fix filter parser delimiter from / to ~
+- Add exception NotFoundException and MethodNotAllowedException
 
 ## 4.0.0
 - Downgrade for PHP 5.6+ usage

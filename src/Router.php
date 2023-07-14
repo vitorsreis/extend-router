@@ -8,6 +8,8 @@
 namespace D5WHUB\Extend\Router;
 
 use D5WHUB\Extend\Router\Cache\CacheInterface;
+use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
+use D5WHUB\Extend\Router\Exception\NotFoundException;
 use D5WHUB\Extend\Router\Exception\RuntimeException;
 use D5WHUB\Extend\Router\Exception\SyntaxException;
 
@@ -186,6 +188,8 @@ class Router
      * @param string $httpMethod
      * @param string $route
      * @return Context
+     * @throws MethodNotAllowedException
+     * @throws NotFoundException
      * @throws RuntimeException
      */
     public function match($httpMethod, $route)

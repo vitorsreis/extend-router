@@ -10,6 +10,8 @@ namespace D5WHUB\Test\Extend\Router;
 
 use D5WHUB\Extend\Router\Context;
 use D5WHUB\Extend\Router\Context\Header\ContextState;
+use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
+use D5WHUB\Extend\Router\Exception\NotFoundException;
 use D5WHUB\Extend\Router\Exception\RuntimeException;
 use D5WHUB\Extend\Router\Exception\SyntaxException;
 use D5WHUB\Extend\Router\Router;
@@ -364,17 +366,17 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
 
         # ERROR
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionCode(404);
-        $this->expectExceptionMessage("Route \"/aaa\" not found!");
+        $this->expectExceptionMessage("Route \"/aaa\" not found");
         $router->match('GET', '/aaa');
     }
 
     public function testNotFound()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionCode(404);
-        $this->expectExceptionMessage("Route \"/bbb\" not found!");
+        $this->expectExceptionMessage("Route \"/bbb\" not found");
 
         (new Router())
             ->get('/aaa', static function () {
@@ -385,9 +387,9 @@ class UnitTest extends TestCase
 
     public function testMethodNotAllowed()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(MethodNotAllowedException::class);
         $this->expectExceptionCode(405);
-        $this->expectExceptionMessage("Method \"POST\" not allowed for route \"/aaa\"!");
+        $this->expectExceptionMessage("Method \"POST\" not allowed for route \"/aaa\"");
 
         (new Router())
             ->get('/aaa', static function () {
@@ -439,7 +441,7 @@ class UnitTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(500);
         $this->expectExceptionMessage(
-            "Required argument \"var1\" for invoke \"D5WHUB\\Test\\Extend\\Router\\requiredArgumentError\"!"
+            "Required argument \"var1\" for invoke \"D5WHUB\\Test\\Extend\\Router\\requiredArgumentError\""
         );
 
         (new Router())
@@ -776,9 +778,9 @@ class UnitTest extends TestCase
         $this->assertEquals('TEST', $match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(NotFoundException::class);
         $this->expectExceptionCode(404);
-        $this->expectExceptionMessage("Route \"/user/AAA/1/12\" not found!");
+        $this->expectExceptionMessage("Route \"/user/AAA/1/12\" not found");
         $router->match('GET', '/user/AAA/1/12');
     }
 
