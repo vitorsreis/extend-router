@@ -243,7 +243,7 @@ trait Matcher
             $indexes = array_merge($indexes, $match);
         }
 
-        return array_values($indexes);
+        return $indexes;
     }
 
     /**
