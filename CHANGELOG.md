@@ -5,6 +5,7 @@ CHANGELOG
 - Performance improvements
   - Fix unique added route index in route collection variable tree
   - Fix match indexes tree
+  - Fix match middlewares order
 - Cache improvements
   - Fix cache get value/default
 

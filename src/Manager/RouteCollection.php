@@ -20,6 +20,11 @@ class RouteCollection
     private $index = 0;
 
     /**
+     * @var int
+     */
+    private $order = 0;
+
+    /**
      * @var int[]
      */
     public $staticIndexes = [];
@@ -50,7 +55,7 @@ class RouteCollection
             ? $this->addStatic($route)
             : $this->addVariable($pattern, $words);
 
-        $this->routeCollection[$index][] = [
+        $this->routeCollection[$index][$this->order++] = [
             'httpMethod' => $httpMethod,
             'route' => $route,
             'pattern' => $pattern,

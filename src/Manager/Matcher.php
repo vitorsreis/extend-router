@@ -65,7 +65,7 @@ trait Matcher
                     break;
                 }
 
-                foreach ($collection as $route) {
+                foreach ($collection as $order => $route) {
                     $params = [];
                     foreach ($route['paramNames'] as $pos => $name) {
                         $params[$name] = isset($paramValues["A$pos"]) ? $paramValues["A$pos"] : null;
@@ -79,8 +79,8 @@ trait Matcher
                         'params' => $params
                     ];
 
-                    foreach ($route['middlewares'] as $middleware) {
-                        $result[] = ['current' => $current, 'callback' => $middleware];
+                    foreach ($route['middlewares'] as $suborder => $middleware) {
+                        $result["$order-$suborder"] = ['current' => $current, 'callback' => $middleware];
                     }
                 }
             }
@@ -91,6 +91,14 @@ trait Matcher
             empty($this->cache) ?: $this->cache->set($cacheKey, $result);
         } else {
             empty($this->cache) ?: $this->cache->set($cacheKey, $indexes);
+
+            uksort($result, function ($a, $b) {
+                $a = explode('-', $a);
+                $b = explode('-', $b);
+                return $a[0] !== $b[0] ? $a[0] > $b[0] : $a[1] > $b[1];
+            });
+
+            $result = array_values($result);
         }
 
         switch ($result) {
@@ -254,7 +262,7 @@ trait Matcher
             $length = 0;
 
             for ($chunk = 0; $chunk < self::INDEXES_PATTERN_MAX_CHUCK && $cursor < $total; $chunk++, $cursor++) {
-                $append = "|{$this->routeCollection->get($indexes[$cursor])[0]['pattern']}(*MARK:$cursor)";
+                $append = "|" . current($this->routeCollection->get($indexes[$cursor]))['pattern'] . "(*MARK:$cursor)";
                 $appendLength = strlen($append);
 
                 if ($length + $appendLength > self::INDEXER_PATTERN_MAX_LENGTH) {
