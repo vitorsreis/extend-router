@@ -1,6 +1,13 @@
 CHANGELOG
 ---
 
+## 4.1.1
+- Performance improvements
+  - Fix unique added route index in route collection variable tree
+  - Fix match indexes tree
+- Cache improvements
+  - Fix cache get value/default
+
 ## 4.1.0
 - Add router group
 - Cache improvements
