@@ -43,9 +43,9 @@ start http://127.0.0.1:80/benchmark-execute.php
 ## Matching random 100 times, 3000 routes with 5 variables
 |                                   Library | Time               | Difference                        |
 |------------------------------------------:|:-------------------|-----------------------------------|
-|          **D5WHub Extend Router (4.0.0)** | **0.00012229443s** | **baseline**                      |
-|      FastRoute (nikic/fast-route - 1.3.0) | 0.00043141603s     | 252.8% slower (+0.00030912161s)   |
-|           Pux PHP (corneltek/pux - 1.6.0) | 0.00174220800s     | 1324.6% slower (+0.00161991358s)  |
-| Symfony Routing (symfony/routing - 6.3.1) | 0.00515930414s     | 4118.8% slower (+0.00503700972s)  |
-|           Klein.php (klein/klein - 2.1.2) | 0.02080127001s     | 16909.2% slower (+0.02067897558s) |
-|         Aura Router (aura/router - 3.3.0) | 0.04540429592s     | 37027% slower (+0.04528200150s)   |
+|          **D5WHub Extend Router (4.1.1)** | **0.00011346817s** | **baseline**                      |
+|      FastRoute (nikic/fast-route - 1.3.0) | 0.00040574789s     | 257.6% slower (+0.00029227972s)   |
+|           Pux PHP (corneltek/pux - 1.6.0) | 0.00160671949s     | 1316% slower (+0.00149325132s)    |
+| Symfony Routing (symfony/routing - 6.3.1) | 0.00492270231s     | 4238.4% slower (+0.00480923414s)  |
+|           Klein.php (klein/klein - 2.1.2) | 0.01885573149s     | 16517.6% slower (+0.01874226332s) |
+|         Aura Router (aura/router - 3.3.0) | 0.04172217846s     | 36669.9% slower (+0.04160871029s) |
