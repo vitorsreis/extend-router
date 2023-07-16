@@ -37,12 +37,12 @@ $setting = [
     // Tests status
     'tests' => [
 //        'instantiation' => true,
+        'rand' => true,
 //        'first' => true,
 //        'last' => true,
 //        'not-found' => true,
 //        'first-not-allowed' => true,
 //        'last-not-allowed' => true,
-        'rand' => true,
 //        'show_end_results' => true,
     ],
 
@@ -72,7 +72,7 @@ $agent = new D5WHUB\Extend\Benchmark\Benchmark(
 );
 
 !empty($setting['tests']['instantiation']) && $benchmark['instantiation'] = $agent->createBenchmark(
-    "Create instances",
+    "Instance create",
     sprintf(
         "Benchmark of creating instances of libraries adding %s route%s with %s variable%s",
         $setting['num_routes'],
