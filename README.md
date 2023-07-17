@@ -57,7 +57,7 @@ $router->match('GET', '/iphone-xs')->execute();
 ```
 
 - Use like this to instantiate already stored router or, if it doesn't exist, instantiate it and then store it in cache.
-  This greatly reduces time from second load onwards.
+  This greatly reduces time from second load onwards. **Does not support routes with anonymous classes or anonymous/arrow functions (Closure objects)**
     - ```&$hash``` argument can be used to control the cache version, if omitted, it is based on the ```$callback```
       source code by reflection.
     - ```&$warning``` argument if different from ```false```", indicates that an error occurred.
@@ -69,8 +69,12 @@ $cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
 // $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
 // $cache = new \D5WHUB\Extend\Router\Cache\Redis();
 
+function callback($id) {
+    echo "product $id";
+}
+
 $router = $cache->createRouter(function (\D5WHUB\Extend\Router\Router $router) {
-    $router->get('/product/:id', function ($id) { echo "product $id"; });
+    $router->get('/product/:id', 'callback');
     $router->friendly('/iphone-xs', '/product/100');
     $router->friendly('/samsumg-s10', '/product/200');
 }, $hash, $warning);
