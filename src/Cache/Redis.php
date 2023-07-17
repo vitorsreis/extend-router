@@ -11,7 +11,7 @@ namespace D5WHUB\Extend\Router\Cache;
 use Exception;
 use RuntimeException;
 
-class Redis extends AbstractCache implements CacheInterface
+class Redis extends AbstractCache
 {
     /**
      * @var \Redis

@@ -9,27 +9,27 @@ namespace D5WHUB\Extend\Router\Cache;
 
 use RuntimeException;
 
-class File extends AbstractCache implements CacheInterface
+class File extends AbstractCache
 {
     /**
      * @var string
      */
-    private $path;
+    private $dir;
 
     /**
-     * @param $path
+     * @param string $dir
      */
-    public function __construct($path)
+    public function __construct($dir)
     {
-        if (!is_dir($path) || !mkdir($path, 0644, true)) {
+        if (!is_dir($dir) && !mkdir($dir, 0644, true)) {
             throw new RuntimeException('Path not found', 500);
         }
 
-        if (!is_writable($path)) {
+        if (!is_writable($dir)) {
             throw new RuntimeException('Path not writable', 500);
         }
 
-        $this->path = rtrim($path, DIRECTORY_SEPARATOR);
+        $this->dir = rtrim($dir, DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -38,7 +38,7 @@ class File extends AbstractCache implements CacheInterface
      */
     private function getFileName($key)
     {
-        return $this->path . DIRECTORY_SEPARATOR . trim($key, DIRECTORY_SEPARATOR) . '.cache';
+        return $this->dir . DIRECTORY_SEPARATOR . trim($key, DIRECTORY_SEPARATOR) . '.cache';
     }
 
     /**
@@ -79,7 +79,7 @@ class File extends AbstractCache implements CacheInterface
      */
     public function set($key, $value)
     {
-        ($value = $this->serialize($value)) !== null && file_put_contents($this->getFileName($key), serialize($value));
+        ($value = $this->serialize($value)) !== null && file_put_contents($this->getFileName($key), $value);
     }
 
     /**
@@ -96,7 +96,7 @@ class File extends AbstractCache implements CacheInterface
      */
     public function clear()
     {
-        foreach (glob($this->path . DIRECTORY_SEPARATOR . '*.cache') as $file) {
+        foreach (glob($this->dir . DIRECTORY_SEPARATOR . '*.cache') as $file) {
             unlink($file);
         }
     }

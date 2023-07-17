@@ -10,7 +10,7 @@ namespace D5WHUB\Extend\Router\Cache;
 
 use RuntimeException;
 
-class Memcached extends AbstractCache implements CacheInterface
+class Memcached extends AbstractCache
 {
     /**
      * @var \Memcached

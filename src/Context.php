@@ -48,7 +48,7 @@ class Context
     /**
      * @var mixed Persist execution data
      */
-    private $data = null;
+    private $data = [];
 
     /**
      * @var array
@@ -75,7 +75,7 @@ class Context
      */
     public function execute($callback = null)
     {
-        if (!is_null($callback)) {
+        if ($callback !== null) {
             $callback = $this->parseMiddlewares([['current' => null, 'callback' => $callback]])[0];
         }
 
@@ -105,18 +105,9 @@ class Context
                 $this->current->friendly = $middleware['current']['friendly'];
                 $this->current->params = (object)$middleware['current']['params'];
 
-                $this->result = $this->call(
-                    $middleware['callable'],
-                    $middleware['params'],
-                    $middleware['construct']
-                );
-
-                if (!is_null($callback)) {
-                    $this->call(
-                        $callback['callable'],
-                        [['type' => 'context']],
-                        $callback['construct']
-                    );
+                $this->result = $this->call($middleware['callable'], $middleware['params'], $middleware['construct']);
+                if ($callback !== null) {
+                    $this->call($callback['callable'], [['type' => 'context']], $callback['construct']);
                 }
 
                 if ($this->header->state !== ContextState::RUNNING) {
@@ -151,7 +142,7 @@ class Context
      */
     public function get($key, $default = null)
     {
-        return isset($this->data[$key]) ? $this->data[$key] : $default;
+        return $this->has($key) ? $this->data[$key] : $default;
     }
 
     /**
@@ -160,7 +151,7 @@ class Context
      */
     public function has($key)
     {
-        return isset($this->data[$key]);
+        return array_key_exists($key, $this->data);
     }
 
     /**

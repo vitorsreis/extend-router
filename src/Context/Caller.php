@@ -22,10 +22,9 @@ trait Caller
      */
     private function call(&$callable, $params, $construct)
     {
-        if (!is_null($construct) && is_string($callable[0])) {
+        if ($construct !== null && is_string($callable[0])) {
             try {
-                $callable[0] = (new ReflectionClass($callable[0]))
-                    ->newInstanceArgs($this->populate($construct));
+                $callable[0] = (new ReflectionClass($callable[0]))->newInstanceArgs($this->populate($construct));
             } catch (ReflectionException $e) {
                 throw new RuntimeException($e->getMessage(), 500);
             }

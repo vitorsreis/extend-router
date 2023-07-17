@@ -109,6 +109,19 @@ class Manager extends Constants
     }
 
     /**
+     * @param CacheInterface|null $cache
+     * @throws RuntimeException
+     */
+    public function setCache($cache)
+    {
+        if ($cache !== null && !($cache instanceof CacheInterface)) {
+            throw new RuntimeException('Invalid cache instance', 500);
+        }
+
+        $this->cache = $cache;
+    }
+
+    /**
      * @param string $httpMethod
      * @param string $uri
      * @return Context

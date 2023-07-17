@@ -21,7 +21,7 @@ class Memory implements CacheInterface
      */
     public function get($key, $default = null)
     {
-        return isset($this->memory[$key]) ? $this->memory[$key] : $default;
+        return $this->has($key) ? $this->memory[$key] : $default;
     }
 
     /**
@@ -40,6 +40,10 @@ class Memory implements CacheInterface
      */
     public function set($key, $value)
     {
+        if ($key === 'router-hash' || $key === 'router-map') {
+            return; // ignore router cache in memory
+        }
+
         $this->memory[$key] = $value;
     }
 

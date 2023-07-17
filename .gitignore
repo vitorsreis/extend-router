@@ -1,5 +1,6 @@
 /.idea/
 /vendor/
 /tests/Benchmark/vendor/
+/tests/UnitTest/cache/
 composer.lock
 phpunit.xml

@@ -8,6 +8,7 @@
 
 namespace D5WHUB\Test\Extend\Router;
 
+use D5WHUB\Extend\Router\Cache\File;
 use D5WHUB\Extend\Router\Context;
 use D5WHUB\Extend\Router\Context\Header\ContextState;
 use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
@@ -503,16 +504,16 @@ class UnitTest extends TestCase
     {
         function middlewareNamedFunction(Context $context)
         {
-            return "uid:{$context->current->params->uid}";
+            return "id:{$context->current->params->id}";
         }
 
         $router = new Router();
-        $router->get('/:uid', '\\D5WHUB\\Test\\Extend\\Router\\middlewareNamedFunction');
+        $router->get('/:id', '\\D5WHUB\\Test\\Extend\\Router\\middlewareNamedFunction');
 
         $match = $router->match('GET', '/111');
         $this->assertInstanceOf(Context::class, $match);
         $this->assertEquals(ContextState::PENDING, $match->header->state);
-        $this->assertEquals('uid:111', $match->execute()->result);
+        $this->assertEquals('id:111', $match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
     }
 
@@ -860,5 +861,78 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::PENDING, $match->header->state);
         $this->assertEquals($expect_variable_characters, $match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+    }
+
+    public function testRouterCachedClosureError()
+    {
+        $cache = new File(__DIR__ . '/UnitTest/cache');
+        $cache->clear();
+        $cache->createRouter(function (Router $router) {
+            $router->get('/aaa', function () {
+                return 111;
+            });
+        }, $hash, $warning);
+        $this->assertEquals([
+            'NOT_FOUND' => 'Cache not found or hash mismatch',
+            'SAVE_FAILED' => "Unable to cache router map, because 'Closure' is not allowed"
+        ], $warning);
+
+        $cache->clear();
+    }
+
+    public function testRouterCachedAnonymousClassError()
+    {
+        if (version_compare(PHP_VERSION, '7', '<')) {
+            $this->markTestSkipped('PHP 7+ required');
+        } else {
+            $cache = new File(__DIR__ . '/UnitTest/cache');
+            $cache->clear();
+            $cache->createRouter(function (Router $router) {
+                $router->get('/aaa', eval('return new class {
+                    public function execute($var1, $var2)
+                    {
+                        return $var1 + $var2;
+                    }
+                };'));
+            }, $hash, $warning);
+            $this->assertEquals([
+                'NOT_FOUND' => 'Cache not found or hash mismatch',
+                'SAVE_FAILED' => "Unable to cache router map, because 'class@anonymous' is not allowed"
+            ], $warning);
+            $cache->clear();
+        }
+    }
+
+    public function testRouterCachedSuccess()
+    {
+        $cache = new File(__DIR__ . '/UnitTest/cache');
+        $cache->clear();
+
+        $callback = function (Router $router) {
+            $router->get('/:id', '\\D5WHUB\\Test\\Extend\\Router\\middlewareNamedFunction');
+        };
+
+        $noCached = $cache->createRouter($callback, $hash1, $warning1);
+        $this->assertEquals([ 'NOT_FOUND' => 'Cache not found or hash mismatch' ], $warning1);
+
+        $cached = $cache->createRouter($callback, $hash2, $warning2);
+        $this->assertEquals(false, $warning2);
+
+        $this->assertEquals($hash1, $hash2);
+        $this->assertEquals($noCached, $cached);
+
+        $match = $noCached->match('GET', '/111');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals("id:111", $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $match = $cached->match('GET', '/222');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals("id:222", $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $cache->clear();
     }
 }

@@ -71,6 +71,15 @@ class Router
     }
 
     /**
+     * @param CacheInterface|null $cache
+     * @throws RuntimeException
+     */
+    public function setCache($cache)
+    {
+        $this->manager->setCache($cache);
+    }
+
+    /**
      * @param string $route
      * @param callable|array|string ...$middleware
      * @return $this
@@ -171,7 +180,7 @@ class Router
 
     /**
      * @param string $route
-     * @param callable $callback fn(Router $router)
+     * @param callable $callback function(Router $router)
      * @return $this
      * @throws RuntimeException
      */

@@ -28,7 +28,7 @@ trait Matcher
         $friendly = null;
 
         # REWRITE FRIENDLY
-        if (isset($this->friendlyCollection[$uri])) {
+        if (array_key_exists($uri, $this->friendlyCollection)) {
             $friendly = $uri;
             $uri = $this->friendlyCollection[$uri];
         }

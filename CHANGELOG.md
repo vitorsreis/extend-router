@@ -1,6 +1,11 @@
 CHANGELOG
 ---
 
+## 4.2.0
+- Added router map builder/store in cache
+- Cache improvements
+  - Fix get File Cache
+
 ## 4.1.1
 - Fix variable params
 - Fix add filter

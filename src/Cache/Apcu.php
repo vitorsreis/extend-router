@@ -10,7 +10,7 @@ namespace D5WHUB\Extend\Router\Cache;
 
 use RuntimeException;
 
-class Apcu extends AbstractCache implements CacheInterface
+class Apcu extends AbstractCache
 {
     public function __construct()
     {
