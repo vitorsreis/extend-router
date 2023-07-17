@@ -36,50 +36,17 @@ $router->match('GET', '/product/100')->execute();
 
 ---
 
-### Cache
+### Router group
 
-- This usage mode or ```Memory``` cache does not store the router map.
-
-```php
-$cache = new \D5WHUB\Extend\Router\Cache\Memory();
-// $cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
-// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
-// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
-
-$router = new \D5WHUB\Extend\Router\Router($cache);
-$router->get('/product/:id', function ($id) { echo "product $id"; });
-$router->friendly('/iphone-xs', '/product/100');
-$router->friendly('/samsumg-s10', '/product/200');
-$router->match('GET', '/iphone-xs')->execute();
-// output: "product 100"
-```
-
-- Use like this to instantiate already stored router or, if it doesn't exist, instantiate it and then store it in cache.
-  This greatly reduces time from second load onwards. **Does not support routes with anonymous classes or anonymous/arrow functions (Closure objects)**
-    - ```&$hash``` argument can be used to control the cache version, if omitted, it is based on the ```$callback```
-      source code by reflection.
-    - ```&$warning``` argument if different from ```false```", indicates that an error occurred.
+You can add group of routes:
 
 ```php
-$cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
-// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
-// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
-
-function callback($id) {
-    echo "product $id";
-}
-
-$router = $cache->createRouter(function (\D5WHUB\Extend\Router\Router $router) {
-    $router->get('/product/:id', 'callback');
-    $router->friendly('/iphone-xs', '/product/100');
-    $router->friendly('/samsumg-s10', '/product/200');
-}, $hash, $warning);
-$router->match('GET', '/iphone-xs')->execute();
-// output: "product 100"
+$router->group('/product', function (\D5WHUB\Extend\Router\Router $router) {
+    $router->get('/:id', function ($id) { echo "get product $id"; });
+    $router->post('/:id', function ($id) { echo "post product $id"; });
+});
+$router->match('POST', '/product/100')->execute();
+// output: "post product 100"
 ```
 
 ---
@@ -111,35 +78,6 @@ try {
         throw $e;
     }
 }
-```
-
----
-
-### Router group
-
-You can add group of routes:
-
-```php
-$router->group('/product', function (\D5WHUB\Extend\Router\Router $router) {
-    $router->get('/:id', function ($id) { echo "get product $id"; });
-    $router->post('/:id', function ($id) { echo "post product $id"; });
-});
-$router->match('POST', '/product/100')->execute();
-// output: "post product 100"
-```
-
----
-
-### Context param
-
-Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "
-\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
-
-```php
-$router->get('/aaa', function ($context) { ... });
-$router->any('/aaa', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
-$router->get('/a*', function (\D5WHUB\Extend\Router\Context $context) { ... });
-$router->any('/a*', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
 ```
 
 ---
@@ -206,6 +144,134 @@ Below are pre-registered filters:
 
 ---
 
+### Cache
+
+- This usage mode or ```Memory``` cache does not store the router map.
+
+```php
+$cache = new \D5WHUB\Extend\Router\Cache\Memory();
+// $cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
+// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
+// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
+// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
+// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
+
+$router = new \D5WHUB\Extend\Router\Router($cache);
+$router->get('/product/:id', function ($id) { echo "product $id"; });
+$router->friendly('/iphone-xs', '/product/100');
+$router->friendly('/samsumg-s10', '/product/200');
+$router->match('GET', '/iphone-xs')->execute();
+// output: "product 100"
+```
+
+- Use like this to instantiate already stored router or, if it doesn't exist, instantiate it and then store it in cache.
+  This greatly reduces time from second load onwards. **Does not support routes with anonymous classes or anonymous/arrow functions (Closure objects)**
+    - ```&$hash``` argument can be used to control the cache version, if omitted, it is based on the ```$callback```
+      source code by reflection.
+    - ```&$warning``` argument if different from ```false```", indicates that an error occurred.
+
+```php
+$cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
+// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
+// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
+// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
+// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
+
+function callback($id) {
+    echo "product $id";
+}
+
+$router = $cache->createRouter(function (\D5WHUB\Extend\Router\Router $router) {
+    $router->get('/product/:id', 'callback');
+    $router->friendly('/iphone-xs', '/product/100');
+    $router->friendly('/samsumg-s10', '/product/200');
+}, $hash, $warning);
+$router->match('GET', '/iphone-xs')->execute();
+// output: "product 100"
+```
+
+---
+
+### Context param
+
+Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "
+\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
+
+```php
+$router->get('/aaa', function ($context) { ... });
+$router->any('/aaa', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
+$router->get('/a*', function (\D5WHUB\Extend\Router\Context $context) { ... });
+$router->any('/a*', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+```
+
+---
+
+### Context methods/properties
+
+| Property                                   | Description                                                                        |
+|:-------------------------------------------|:-----------------------------------------------------------------------------------|
+| ```$context->current->route```             | Current match middleware route                                                     |
+| ```$context->current->httpMethod```        | Current match middleware http method                                               |
+| ```$context->current->uri```               | Current match middleware uri                                                       |
+| ```$context->current->friendly```          | Current match middleware friendly uri                                              |
+| ```$context->current->params```            | Current match middleware uri variables                                             |
+| ```$context->header->hash```               | Current execution hash                                                             |
+| ```$context->header->cursor```             | Current execution position on queue middleware                                     |
+| ```$context->header->total```              | Total execution queue middlewares count                                            |
+| ```$context->header->state```              | Current execution state                                                            |
+| ```$context->header->startTime```          | Execution start time                                                               |
+| ```$context->header->endTime```            | Execution end time                                                                 |
+| ```$context->header->elapsedTime```        | Execution time                                                                     |
+| ```$context->cached```                     | Execution result is cached                                                         |
+| ```$context->result```                     | Partial/Final execution result                                                     |
+| ```$context->execute(?$callback)```        | Start execution, ```$callback``` is optional and available argument ```$context``` |
+| ```$context->stop()```                     | Stop execution                                                                     |
+| ```$context->get($key, $default = null)``` | Get persistent data                                                                |
+| ```$context->set($key, $value)```          | Set persistent data                                                                |
+| ```$context->has($key)```                  | Check if persistent data exists                                                    |
+
+---
+
+### Persisting data
+
+You can persist data in context so that it is persisted in future callbacks.
+
+```php
+$router->get('/aaa', function (\D5WHUB\Extend\Router\Context $context) {
+    $context->set('xxx', $context->get('xxx', 0) + 10); # 2. Increment value: 5 + 10 = 15
+});
+$router->get('/var2', function (\D5WHUB\Extend\Router\Context $context) {
+    $context->set('xxx', $context->get('xxx', 0) + 15); # 3. Increment value: 15 + 15 = 30
+});
+$context = $router->match('GET', '/aaa')
+    ->set('xxx', 5) # 1. Initial value: 5
+    ->execute();
+
+echo $context->get('xxx');
+// output: "30"
+```
+
+---
+
+### Execute with callback
+
+You can run receiving callbacks every middleware run with current context.
+
+```php
+$router->post('/:aa', function ($aa) { return "a1:$aa "; }, function ($aa) { return "a2:$aa "; });
+$router->post('/:bb', function ($bb) { return "bb:$bb "; });
+$router->match('POST', '/99')->execute(function ($context) {
+    // partial result, run 3 times
+    echo '[' .
+        "{$context->header->cursor}/{$context->header->total} " .
+        "{$context->current->httpMethod} {$context->current->route} = $context->result" .
+    '], ';
+});
+// output: "[1/3 POST /:aa = a1:99], [2/3 POST /:aa = a2:99], [3/3 POST /:bb = bb:99], "
+```
+
+---
+
 ### Middleware with arguments
 
 Route variables and context param are not mandatory in callbacks, so they can be omitted without problems.
@@ -231,46 +297,6 @@ $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, mixed $context) { ... }); # Explicit mixed type only PHP 8+
 $router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
-```
-
----
-
-### Execute with callback
-
-You can run receiving callbacks every middleware run with current context.
-
-```php
-$router->post('/:aa', function ($aa) { return "a1:$aa "; }, function ($aa) { return "a2:$aa "; });
-$router->post('/:bb', function ($bb) { return "bb:$bb "; });
-$router->match('POST', '/99')->execute(function ($context) {
-    // partial result, run 3 times
-    echo '[' .
-        "{$context->header->cursor}/{$context->header->total} " .
-        "{$context->current->httpMethod} {$context->current->route} = $context->result" .
-    '], ';
-});
-// output: "[1/3 POST /:aa = a1:99], [2/3 POST /:aa = a2:99], [3/3 POST /:bb = bb:99], "
-```
-
----
-
-### Persisting data
-
-You can persist data in context so that it is persisted in future callbacks.
-
-```php
-$router->get('/aaa', function (\D5WHUB\Extend\Router\Context $context) {
-    $context->set('xxx', $context->get('xxx', 0) + 10); # 2. Increment value: 5 + 10 = 15
-});
-$router->get('/var2', function (\D5WHUB\Extend\Router\Context $context) {
-    $context->set('xxx', $context->get('xxx', 0) + 15); # 3. Increment value: 15 + 15 = 30
-});
-$context = $router->match('GET', '/aaa')
-    ->set('xxx', 5) # 1. Initial value: 5
-    ->execute();
-
-echo $context->get('xxx');
-// output: "30"
 ```
 
 ---
@@ -309,33 +335,7 @@ $router->match('GET', '/aaa')->execute();
 
 ---
 
-### Context methods/properties
-
-| Property                                   | Description                                                                        |
-|:-------------------------------------------|:-----------------------------------------------------------------------------------|
-| ```$context->current->route```             | Current match middleware route                                                     |
-| ```$context->current->httpMethod```        | Current match middleware http method                                               |
-| ```$context->current->uri```               | Current match middleware uri                                                       |
-| ```$context->current->friendly```          | Current match middleware friendly uri                                              |
-| ```$context->current->params```            | Current match middleware uri variables                                             |
-| ```$context->header->hash```               | Current execution hash                                                             |
-| ```$context->header->cursor```             | Current execution position on queue middleware                                     |
-| ```$context->header->total```              | Total execution queue middlewares count                                            |
-| ```$context->header->state```              | Current execution state                                                            |
-| ```$context->header->startTime```          | Execution start time                                                               |
-| ```$context->header->endTime```            | Execution end time                                                                 |
-| ```$context->header->elapsedTime```        | Execution time                                                                     |
-| ```$context->cached```                     | Execution result is cached                                                         |
-| ```$context->result```                     | Partial/Final execution result                                                     |
-| ```$context->execute(?$callback)```        | Start execution, ```$callback``` is optional and available argument ```$context``` |
-| ```$context->stop()```                     | Stop execution                                                                     |
-| ```$context->get($key, $default = null)``` | Get persistent data                                                                |
-| ```$context->set($key, $value)```          | Set persistent data                                                                |
-| ```$context->has($key)```                  | Check if persistent data exists                                                    |
-
----
-
-### Supported callback types
+### Supported middleware types
 
 ```php
 // by native function name
