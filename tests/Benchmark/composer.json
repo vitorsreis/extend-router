@@ -15,13 +15,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "D5WHUB\\Extend\\Router\\": "../../src/"
+            "VSR\\Extend\\": "../../src/"
         }
     },
     "require": {
         "php": ">=8.2",
 
-        "d5whub/extend-benchmark": "^1.0",
+        "vitorsreis/extend-benchmark": "^1.0",
         "nikic/fast-route": "dev-master",
         "symfony/routing": "7.0.x-dev",
         "aura/router": "4.x-dev",

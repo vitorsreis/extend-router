@@ -1,15 +1,15 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router\Exception;
+namespace VSR\Extend\Router\Exception;
 
 use Exception;
 
-class SyntaxException extends Exception
+class RuntimeException extends Exception
 {
     /**
      * @param string $message

@@ -1,10 +1,10 @@
 # Very elegant, fast and powerful router for PHP
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/d5whub/extend-router?style=flat-square&label=stable&color=2E9DD3)](https://packagist.org/packages/d5whub/extend-router)
-[![PHP Version Require](https://img.shields.io/packagist/dependency-v/d5whub/extend-router/php?style=flat-square&color=777BB3)](https://packagist.org/packages/d5whub/extend-router)
-[![License](https://img.shields.io/packagist/l/d5whub/extend-router?style=flat-square&color=418677)](https://github.com/d5whub/extend-router/blob/master/LICENSE)
-[![Total Downloads](https://img.shields.io/packagist/dt/d5whub/extend-router?style=flat-square&color=0476B7)](https://packagist.org/packages/d5whub/extend-router)
-[![Repo Stars](https://img.shields.io/github/stars/d5whub/extend-router?style=social)](https://github.com/d5whub/extend-router)
+[![Latest Stable Version](https://img.shields.io/packagist/v/vitorsreis/extend-router?style=flat-square&label=stable&color=2E9DD3)](https://packagist.org/packages/vitorsreis/extend-router)
+[![PHP Version Require](https://img.shields.io/packagist/dependency-v/vitorsreis/extend-router/php?style=flat-square&color=777BB3)](https://packagist.org/packages/vitorsreis/extend-router)
+[![License](https://img.shields.io/packagist/l/vitorsreis/extend-router?style=flat-square&color=418677)](https://github.com/vitorsreis/extend-router/blob/master/LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/vitorsreis/extend-router?style=flat-square&color=0476B7)](https://packagist.org/packages/vitorsreis/extend-router)
+[![Repo Stars](https://img.shields.io/github/stars/vitorsreis/extend-router?style=social)](https://github.com/vitorsreis/extend-router)
 
 Indexing by words tree and regex marked, this router is very elegant, fast and powerful. Architected as a queue of
 merged middlewares (not unique match), it proposes multiple interactions in routes with cache, contexts and persistent
@@ -22,13 +22,13 @@ Check out benchmark with leading public libraries [here](/tests/Benchmark/Benchm
 ## Install
 
 ```shell
-composer require "d5whub/extend-router"
+composer require vitorsreis/extend-router
 ```
 
 ## Usage
 
 ```php
-$router = new \D5WHUB\Extend\Router\Router();
+$router = new \VSR\Extend\Router();
 $router->get('/product/:id', function ($id) { echo "product $id"; });
 $router->match('GET', '/product/100')->execute();
 // output: "product 100"
@@ -41,7 +41,7 @@ $router->match('GET', '/product/100')->execute();
 You can add group of routes:
 
 ```php
-$router->group('/product', function (\D5WHUB\Extend\Router\Router $router) {
+$router->group('/product', function (\VSR\Extend\Router $router) {
     $router->get('/:id', function ($id) { echo "get product $id"; });
     $router->post('/:id', function ($id) { echo "post product $id"; });
 });
@@ -58,9 +58,9 @@ $router->match('POST', '/product/100')->execute();
 ```php
 try {
     $router->match('POST', '/aaa');
-} catch (\D5WHUB\Extend\Router\Exception\NotFoundException $e) {
+} catch (\VSR\Extend\Router\Exception\NotFoundException $e) {
     echo "{$e->getCode()}: {$e->getMessage()}"; // output: "404: Route \"/aaa\" not found"
-} catch (\D5WHUB\Extend\Router\Exception\MethodNotAllowedException $e) {
+} catch (\VSR\Extend\Router\Exception\MethodNotAllowedException $e) {
     echo "{$e->getCode()}: {$e->getMessage()}"; // output: "405: Method \"POST\" not allowed for route \"/aaa\""
 }
 ```
@@ -70,7 +70,7 @@ try {
 ```php
 try {
     $router->match('POST', '/aaa');
-} catch (\D5WHUB\Extend\Router\Exception\RuntimeException $e) {
+} catch (\VSR\Extend\Router\Exception\RuntimeException $e) {
     if (in_array($e->getCode(), [404, 405])) {
         echo "{$e->getCode()}: {$e->getMessage()}";
         // output: "404: Route \"/aaa\" not found" or  "405: Method \"POST\" not allowed for route \"/aaa\""
@@ -149,14 +149,14 @@ Below are pre-registered filters:
 - This usage mode or ```Memory``` cache does not store the router map.
 
 ```php
-$cache = new \D5WHUB\Extend\Router\Cache\Memory();
-// $cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
-// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
-// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
+$cache = new \VSR\Extend\Router\Cache\Memory();
+// $cache = new \VSR\Extend\Router\Cache\File(__DIR__ . "/cache/");
+// $cache = new \VSR\Extend\Router\Cache\Apcu();
+// $cache = new \VSR\Extend\Router\Cache\Memcache();
+// $cache = new \VSR\Extend\Router\Cache\Memcached();
+// $cache = new \VSR\Extend\Router\Cache\Redis();
 
-$router = new \D5WHUB\Extend\Router\Router($cache);
+$router = new \VSR\Extend\Router($cache);
 $router->get('/product/:id', function ($id) { echo "product $id"; });
 $router->friendly('/iphone-xs', '/product/100');
 $router->friendly('/samsumg-s10', '/product/200');
@@ -165,23 +165,24 @@ $router->match('GET', '/iphone-xs')->execute();
 ```
 
 - Use like this to instantiate already stored router or, if it doesn't exist, instantiate it and then store it in cache.
-  This greatly reduces time from second load onwards. **Does not support routes with anonymous classes or anonymous/arrow functions (Closure objects)**
+  This greatly reduces time from second load onwards. **Does not support routes with anonymous classes or
+  anonymous/arrow functions (Closure objects)**
     - ```&$hash``` argument can be used to control the cache version, if omitted, it is based on the ```$callback```
       source code by reflection.
     - ```&$warning``` argument if different from ```false```", indicates that an error occurred.
 
 ```php
-$cache = new \D5WHUB\Extend\Router\Cache\File(__DIR__ . "/cache/");
-// $cache = new \D5WHUB\Extend\Router\Cache\Apcu();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcache();
-// $cache = new \D5WHUB\Extend\Router\Cache\Memcached();
-// $cache = new \D5WHUB\Extend\Router\Cache\Redis();
+$cache = new \VSR\Extend\Router\Cache\File(__DIR__ . "/cache/");
+// $cache = new \VSR\Extend\Router\Cache\Apcu();
+// $cache = new \VSR\Extend\Router\Cache\Memcache();
+// $cache = new \VSR\Extend\Router\Cache\Memcached();
+// $cache = new \VSR\Extend\Router\Cache\Redis();
 
 function callback($id) {
     echo "product $id";
 }
 
-$router = $cache->createRouter(function (\D5WHUB\Extend\Router\Router $router) {
+$router = $cache->createRouter(function (\VSR\Extend\Router $router) {
     $router->get('/product/:id', 'callback');
     $router->friendly('/iphone-xs', '/product/100');
     $router->friendly('/samsumg-s10', '/product/200');
@@ -195,13 +196,13 @@ $router->match('GET', '/iphone-xs')->execute();
 ### Context param
 
 Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "
-\D5WHUB\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
+\VSR\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
 
 ```php
 $router->get('/aaa', function ($context) { ... });
 $router->any('/aaa', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
-$router->get('/a*', function (\D5WHUB\Extend\Router\Context $context) { ... });
-$router->any('/a*', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->get('/a*', function (\VSR\Extend\Router\Context $context) { ... });
+$router->any('/a*', function (\VSR\Extend\Router\Context $custom_name_context) { ... });
 ```
 
 ---
@@ -237,10 +238,10 @@ $router->any('/a*', function (\D5WHUB\Extend\Router\Context $custom_name_context
 You can persist data in context so that it is persisted in future callbacks.
 
 ```php
-$router->get('/aaa', function (\D5WHUB\Extend\Router\Context $context) {
+$router->get('/aaa', function (\VSR\Extend\Router\Context $context) {
     $context->set('xxx', $context->get('xxx', 0) + 10); # 2. Increment value: 5 + 10 = 15
 });
-$router->get('/var2', function (\D5WHUB\Extend\Router\Context $context) {
+$router->get('/var2', function (\VSR\Extend\Router\Context $context) {
     $context->set('xxx', $context->get('xxx', 0) + 15); # 3. Increment value: 15 + 15 = 30
 });
 $context = $router->match('GET', '/aaa')
@@ -282,21 +283,21 @@ $router->any('/:var1/:var2', function ($var1) { ... });
 $router->any('/:var1/:var2', function ($var2) { ... });
 $router->any('/:var1/:var2', function ($context) { ... });
 $router->any('/:var1/:var2', function (mixed $context) { ... }); # Explicit mixed type only PHP 8+
-$router->any('/:var1/:var2', function (\D5WHUB\Extend\Router\Context $context) { ... });
-$router->any('/:var1/:var2', function (\D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function (\VSR\Extend\Router\Context $context) { ... });
+$router->any('/:var1/:var2', function (\VSR\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2) { ... });
 $router->any('/:var1/:var2', function ($var1, $context) { ... });
 $router->any('/:var1/:var2', function ($var1, mixed $context) { ... }); # Explicit mixed type only PHP 8+
-$router->any('/:var1/:var2', function ($var1, \D5WHUB\Extend\Router\Context $context) { ... });
-$router->any('/:var1/:var2', function ($var1, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function ($var1, \VSR\Extend\Router\Context $context) { ... });
+$router->any('/:var1/:var2', function ($var1, \VSR\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var2, $context) { ... });
 $router->any('/:var1/:var2', function ($var2, mixed $custom_name_context) { ... }); # Explicit mixed type only PHP 8+
-$router->any('/:var1/:var2', function ($var2, \D5WHUB\Extend\Router\Context $context) { ... });
-$router->any('/:var1/:var2', function ($var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function ($var2, \VSR\Extend\Router\Context $context) { ... });
+$router->any('/:var1/:var2', function ($var2, \VSR\Extend\Router\Context $custom_name_context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, $context) { ... });
 $router->any('/:var1/:var2', function ($var1, $var2, mixed $context) { ... }); # Explicit mixed type only PHP 8+
-$router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $context) { ... });
-$router->any('/:var1/:var2', function ($var1, $var2, \D5WHUB\Extend\Router\Context $custom_name_context) { ... });
+$router->any('/:var1/:var2', function ($var1, $var2, \VSR\Extend\Router\Context $context) { ... });
+$router->any('/:var1/:var2', function ($var1, $var2, \VSR\Extend\Router\Context $custom_name_context) { ... });
 ```
 
 ---
@@ -324,7 +325,7 @@ You can stop the queue using "stop" method of context
 $router->get('/aaa', function () { echo "11 "; }, function () { echo "12 "; }, function () { echo "13 "; });
 $router->any('/aaa', function () { echo "2 "; });
 $router->get('/a*', function () { echo "3 "; });
-$router->any('/a*', function (\D5WHUB\Extend\Router\Context $context) { echo "4 "; $context->stop(); });
+$router->any('/a*', function (\VSR\Extend\Router\Context $context) { echo "4 "; $context->stop(); });
 $router->get('*', function () { echo "5 "; });
 $router->any('*', function () { echo "6 "; });
 $router->get('/:var', function ($var) { echo "7 "; });

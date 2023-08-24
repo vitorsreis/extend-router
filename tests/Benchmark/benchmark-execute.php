@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
@@ -55,7 +55,7 @@ $setting['arguments'] = require __DIR__ . '/Setup/arguments.php';
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$agent = new D5WHUB\Extend\Benchmark\Benchmark(
+$agent = new VSR\Extend\Benchmark(
     'Router libraries benchmark',
     sprintf(
         'The purpose of this benchmark is to compare various php router libraries in different scenarios with %s '

@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router\Context;
+namespace VSR\Extend\Router\Context;
 
-use D5WHUB\Extend\Router\Context\Header\ContextState;
+use VSR\Extend\Router\Context\Header\ContextState;
 
 class Header
 {

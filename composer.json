@@ -1,7 +1,7 @@
 {
-    "name": "d5whub/extend-router",
+    "name": "vitorsreis/extend-router",
     "description": "Very elegant, fast and powerful router for PHP",
-    "version": "4.2.0",
+    "version": "4.3.0",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -16,16 +16,17 @@
     ],
     "autoload": {
         "psr-4": {
-            "D5WHUB\\Extend\\Router\\": "src/"
+            "VSR\\Extend\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "D5WHUB\\Test\\Extend\\Router\\": "tests/"
+            "VSR\\Test\\Extend\\Router\\": "tests/"
         }
     },
     "require": {
-        "php": ">=5.6"
+        "php": ">=5.6",
+        "vitorsreis/extend-caller": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*",

@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router\Manager;
+namespace VSR\Extend\Router\Manager;
 
-use D5WHUB\Extend\Router\Context;
-use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
-use D5WHUB\Extend\Router\Exception\NotFoundException;
-use D5WHUB\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router\Context;
+use VSR\Extend\Router\Exception\MethodNotAllowedException;
+use VSR\Extend\Router\Exception\NotFoundException;
+use VSR\Extend\Router\Exception\RuntimeException;
 
 trait Matcher
 {

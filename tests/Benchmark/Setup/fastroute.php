@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
 declare(strict_types=1);
 
 /** @var array $setting */
-/** @var D5WHUB\Extend\Benchmark\Benchmark\Collection[] $benchmark */
+/** @var VSR\Extend\Benchmark\Collection[] $benchmark */
 
 (static function ($setting, $benchmark) {
     $title = 'FastRoute';

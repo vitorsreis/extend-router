@@ -1,17 +1,19 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router;
+namespace VSR\Extend;
 
-use D5WHUB\Extend\Router\Cache\CacheInterface;
-use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
-use D5WHUB\Extend\Router\Exception\NotFoundException;
-use D5WHUB\Extend\Router\Exception\RuntimeException;
-use D5WHUB\Extend\Router\Exception\SyntaxException;
+use VSR\Extend\Router\Cache\CacheInterface;
+use VSR\Extend\Router\Context;
+use VSR\Extend\Router\Exception\MethodNotAllowedException;
+use VSR\Extend\Router\Exception\NotFoundException;
+use VSR\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router\Exception\SyntaxException;
+use VSR\Extend\Router\Manager;
 
 class Router
 {

@@ -1,21 +1,20 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
 declare(strict_types=1);
 
 /** @var array $setting */
-/** @var D5WHUB\Extend\Benchmark\Benchmark\Collection[] $benchmark */
+/** @var VSR\Extend\Benchmark\Collection[] $benchmark */
 
 (static function ($setting, $benchmark) {
     $title = 'Aura Router';
     $argument = $setting['arguments']['{arg}'];
     $instance = static function () use ($setting, $argument) {
         $instance = new Aura\Router\RouterContainer();
-
         for ($i = 0, $cursor = 0; $i < $setting['num_routes']; $i++, $cursor++) {
             [$route, $url] = $argument['routes'][$i];
             if (!$i || $i === $setting['num_routes'] - 1 || in_array($url, $argument['match']['rand'])) {

@@ -1,23 +1,20 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
 declare(strict_types=1);
 
 /** @var array $setting */
-/** @var D5WHUB\Extend\Benchmark\Benchmark\Collection[] $benchmark */
+/** @var VSR\Extend\Benchmark\Collection[] $benchmark */
 
 (static function ($setting, $benchmark) {
-
-    $title = 'D5WHub Extend Router';
+    $title = 'VSR Extend Router';
     $argument = $setting['arguments'][':arg'];
     $instance = static function () use ($setting, $argument) {
-
-        $instance = new D5WHUB\Extend\Router\Router(new D5WHUB\Extend\Router\Cache\Memory());
-
+        $instance = new VSR\Extend\Router(new VSR\Extend\Router\Cache\Memory());
         for ($i = 0, $cursor = 0; $i < $setting['num_routes']; $i++, $cursor++) {
             [$route, $url] = $argument['routes'][$i];
             if (!$i || $i === $setting['num_routes'] - 1 || in_array($url, $argument['match']['rand'])) {
@@ -45,29 +42,52 @@ declare(strict_types=1);
         $instance = static fn() => $instance;
     }
 
-    ($benchmark['first'] ?? null)?->addTest($title, ['return' => 'TEST'], (static fn($instance) => static function () use ($instance, $argument) {
-
+    ($benchmark['first'] ?? null)?->addTest(
+        $title,
+        ['return' => 'TEST'],
+        (static fn($instance) => static function () use ($instance, $argument) {
             return $instance->match('GET', $argument['match']['first'])->execute()->result;
-    })($instance()));
-    ($benchmark['last'] ?? null)?->addTest($title, ['return' => 'TEST'], (static fn($instance) => static function () use ($instance, $argument) {
+        })($instance())
+    );
 
+    ($benchmark['last'] ?? null)?->addTest(
+        $title,
+        ['return' => 'TEST'],
+        (static fn($instance) => static function () use ($instance, $argument) {
             return $instance->match('GET', $argument['match']['last'])->execute()->result;
-    })($instance()));
-    ($benchmark['not-found'] ?? null)?->addTest($title, ['throw' => ['code' => 404, 'class' => D5WHUB\Extend\Router\Exception\RuntimeException::class]], (static fn($instance) => static function () use ($instance) {
+        })($instance())
+    );
 
+    ($benchmark['not-found'] ?? null)?->addTest(
+        $title,
+        ['throw' => ['code' => 404, 'class' => VSR\Extend\Router\Exception\RuntimeException::class]],
+        (static fn($instance) => static function () use ($instance) {
             return $instance->match('GET', '/not-even-real')->execute()->result;
-    })($instance()));
-    ($benchmark['first-not-allowed'] ?? null)?->addTest($title, ['throw' => ['code' => 405, 'class' => D5WHUB\Extend\Router\Exception\RuntimeException::class]], (static fn($instance) => static function () use ($instance, $argument) {
+        })($instance())
+    );
 
+    ($benchmark['first-not-allowed'] ?? null)?->addTest(
+        $title,
+        ['throw' => ['code' => 405, 'class' => VSR\Extend\Router\Exception\RuntimeException::class]],
+        (static fn($instance) => static function () use ($instance, $argument) {
             return $instance->match('POST', $argument['match']['first'])->execute()->result;
-    })($instance()));
-    ($benchmark['last-not-allowed'] ?? null)?->addTest($title, ['throw' => ['code' => 405, 'class' => D5WHUB\Extend\Router\Exception\RuntimeException::class]], (static fn($instance) => static function () use ($instance, $argument) {
+        })($instance())
+    );
 
+    ($benchmark['last-not-allowed'] ?? null)?->addTest(
+        $title,
+        ['throw' => ['code' => 405, 'class' => VSR\Extend\Router\Exception\RuntimeException::class]],
+        (static fn($instance) => static function () use ($instance, $argument) {
             return $instance->match('POST', $argument['match']['last'])->execute()->result;
-    })($instance()));
-    $random = $argument['match']['rand'];
-    ($benchmark['rand'] ?? null)?->addTest($title, ['return' => 'TEST'], (static fn($instance) => static function () use ($instance, &$random) {
+        })($instance())
+    );
 
+    $random = $argument['match']['rand'];
+    ($benchmark['rand'] ?? null)?->addTest(
+        $title,
+        ['return' => 'TEST'],
+        (static fn($instance) => static function () use ($instance, &$random) {
             return $instance->match('GET', array_shift($random))->execute()->result;
-    })($instance()));
+        })($instance())
+    );
 })($setting, $benchmark);

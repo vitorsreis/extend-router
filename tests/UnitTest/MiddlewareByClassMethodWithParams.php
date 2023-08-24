@@ -1,11 +1,11 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Test\Extend\Router\UnitTest;
+namespace VSR\Test\Extend\Router\UnitTest;
 
 class MiddlewareByClassMethodWithParams
 {

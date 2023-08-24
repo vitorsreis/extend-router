@@ -1,23 +1,23 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router;
+namespace VSR\Extend\Router;
 
-use D5WHUB\Extend\Router\Cache\CacheInterface;
-use D5WHUB\Extend\Router\Context\Caller;
-use D5WHUB\Extend\Router\Context\Current;
-use D5WHUB\Extend\Router\Context\Header;
-use D5WHUB\Extend\Router\Context\Header\ContextState;
-use D5WHUB\Extend\Router\Exception\RuntimeException;
-use D5WHUB\Extend\Router\Manager\Parser;
+use VSR\Extend\Router\Cache\CacheInterface;
+use VSR\Extend\Router\Context\Resolver;
+use VSR\Extend\Router\Context\Current;
+use VSR\Extend\Router\Context\Header;
+use VSR\Extend\Router\Context\Header\ContextState;
+use VSR\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router\Manager\Parser;
 
 class Context
 {
-    use Caller;
+    use Resolver;
     use Parser;
 
     /**
@@ -105,9 +105,9 @@ class Context
                 $this->current->friendly = $middleware['current']['friendly'];
                 $this->current->params = (object)$middleware['current']['params'];
 
-                $this->result = $this->call($middleware['callable'], $middleware['params'], $middleware['construct']);
+                $this->result = $this->resolveWithContext($middleware, $middleware['current']['params']);
                 if ($callback !== null) {
-                    $this->call($callback['callable'], [['type' => 'context']], $callback['construct']);
+                    $this->resolveWithContext($callback);
                 }
 
                 if ($this->header->state !== ContextState::RUNNING) {

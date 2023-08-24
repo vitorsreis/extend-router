@@ -1,21 +1,21 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router;
+namespace VSR\Extend\Router;
 
-use D5WHUB\Extend\Router\Cache\CacheInterface;
-use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
-use D5WHUB\Extend\Router\Exception\NotFoundException;
-use D5WHUB\Extend\Router\Exception\RuntimeException;
-use D5WHUB\Extend\Router\Exception\SyntaxException;
-use D5WHUB\Extend\Router\Manager\Constants;
-use D5WHUB\Extend\Router\Manager\Matcher;
-use D5WHUB\Extend\Router\Manager\Parser;
-use D5WHUB\Extend\Router\Manager\RouteCollection;
+use VSR\Extend\Router\Cache\CacheInterface;
+use VSR\Extend\Router\Exception\MethodNotAllowedException;
+use VSR\Extend\Router\Exception\NotFoundException;
+use VSR\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router\Exception\SyntaxException;
+use VSR\Extend\Router\Manager\Constants;
+use VSR\Extend\Router\Manager\Matcher;
+use VSR\Extend\Router\Manager\Parser;
+use VSR\Extend\Router\Manager\RouteCollection;
 
 class Manager extends Constants
 {

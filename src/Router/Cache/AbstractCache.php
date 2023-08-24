@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  */
 
-namespace D5WHUB\Extend\Router\Cache;
+namespace VSR\Extend\Router\Cache;
 
-use D5WHUB\Extend\Router\Exception\RuntimeException;
-use D5WHUB\Extend\Router\Router;
+use VSR\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router;
 use Exception;
 use ReflectionException;
 use ReflectionFunction;

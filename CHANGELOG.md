@@ -1,6 +1,10 @@
 CHANGELOG
 ---
 
+## 4.3.0
+- Use [VSR\\Extend\\Caller](https://github.com/vitorsreis/extend-caller)
+- Fix PSR-12
+
 ## 4.2.0
 - Added router map builder/store in cache
 - Cache improvements

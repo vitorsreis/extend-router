@@ -1,11 +1,12 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
+ * @phpcs:disable
  */
 
-namespace D5WHUB\Extend\Router\Context\Header;
+namespace VSR\Extend\Router\Context\Header;
 
 class ContextState
 {

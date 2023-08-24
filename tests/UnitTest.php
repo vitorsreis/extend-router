@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
  * @noinspection PhpUnhandledExceptionInspection
  */
 
-namespace D5WHUB\Test\Extend\Router;
+namespace VSR\Test\Extend\Router;
 
-use D5WHUB\Extend\Router\Cache\File;
-use D5WHUB\Extend\Router\Context;
-use D5WHUB\Extend\Router\Context\Header\ContextState;
-use D5WHUB\Extend\Router\Exception\MethodNotAllowedException;
-use D5WHUB\Extend\Router\Exception\NotFoundException;
-use D5WHUB\Extend\Router\Exception\RuntimeException;
-use D5WHUB\Extend\Router\Exception\SyntaxException;
-use D5WHUB\Extend\Router\Router;
-use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithConstructContext;
-use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithParams;
-use D5WHUB\Test\Extend\Router\UnitTest\MiddlewareByClassStaticMethod;
+use VSR\Extend\Router\Cache\File;
+use VSR\Extend\Router\Context;
+use VSR\Extend\Router\Context\Header\ContextState;
+use VSR\Extend\Router\Exception\MethodNotAllowedException;
+use VSR\Extend\Router\Exception\NotFoundException;
+use VSR\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router\Exception\SyntaxException;
+use VSR\Extend\Router;
+use VSR\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithConstructContext;
+use VSR\Test\Extend\Router\UnitTest\MiddlewareByClassMethodWithParams;
+use VSR\Test\Extend\Router\UnitTest\MiddlewareByClassStaticMethod;
 use PHPUnit\Framework\TestCase;
 
 class UnitTest extends TestCase
@@ -442,11 +442,11 @@ class UnitTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(500);
         $this->expectExceptionMessage(
-            "Required argument \"var1\" for invoke \"D5WHUB\\Test\\Extend\\Router\\requiredArgumentError\""
+            "Missing required parameter \$var1"
         );
 
         (new Router())
-            ->get('/:var2', '\\D5WHUB\\Test\\Extend\\Router\\requiredArgumentError')
+            ->get('/:var2', '\\VSR\\Test\\Extend\\Router\\requiredArgumentError')
             ->match('GET', '/100')
             ->execute();
     }
@@ -464,11 +464,7 @@ class UnitTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(500);
-        if (version_compare(PHP_VERSION, '8', '<')) {
-            $this->expectExceptionMessage("Class \\~ does not exist");
-        } else {
-            $this->expectExceptionMessage("Class \"\\~\" does not exist");
-        }
+        $this->expectExceptionMessage("Class \"\\~\" does not exist");
 
         (new Router())
             ->get('/:var2', '\\~::~notFoundMethod')
@@ -480,7 +476,7 @@ class UnitTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage("Method " . self::class . "::~notFoundMethod() does not exist");
+        $this->expectExceptionMessage("Method \"" . self::class . "::~notFoundMethod()\" does not exist");
 
         (new Router())
             ->get('/:var2', self::class . '::~notFoundMethod')
@@ -492,7 +488,7 @@ class UnitTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage("Function ~notFoundFunction() does not exist");
+        $this->expectExceptionMessage("Function \"~notFoundFunction()\" does not exist");
 
         (new Router())
             ->get('/:var2', '~notFoundFunction')
@@ -508,7 +504,7 @@ class UnitTest extends TestCase
         }
 
         $router = new Router();
-        $router->get('/:id', '\\D5WHUB\\Test\\Extend\\Router\\middlewareNamedFunction');
+        $router->get('/:id', '\\VSR\\Test\\Extend\\Router\\middlewareNamedFunction');
 
         $match = $router->match('GET', '/111');
         $this->assertInstanceOf(Context::class, $match);
@@ -592,7 +588,7 @@ class UnitTest extends TestCase
         $router = new Router();
         $router->get(
             '/:var1/:var2',
-            "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassStaticMethod::context"
+            "\\VSR\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassStaticMethod::context"
         );
 
         $match = $router->match('GET', '/111/222');
@@ -633,7 +629,7 @@ class UnitTest extends TestCase
         $router = new Router();
         $router->get(
             '/:var1/:var2',
-            "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithParams::execute"
+            "\\VSR\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithParams::execute"
         );
 
         $match = $router->match('GET', '/111/222');
@@ -674,7 +670,7 @@ class UnitTest extends TestCase
         $router = new Router();
         $router->get(
             '/:var1/:var2',
-            "\\D5WHUB\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithConstructContext::execute"
+            "\\VSR\\Test\\Extend\\Router\\UnitTest\\MiddlewareByClassMethodWithConstructContext::execute"
         );
 
         $match = $router->match('GET', '/111/222');
@@ -693,7 +689,7 @@ class UnitTest extends TestCase
             $router->get(
                 '/:var1/:var2',
                 eval('return new class {
-                    public function __invoke(\D5WHUB\Extend\Router\Context $context)
+                    public function __invoke(\VSR\Extend\Router\Context $context)
                     {
                         return $context->current->params->var1 + $context->current->params->var2;
                     }
@@ -909,7 +905,7 @@ class UnitTest extends TestCase
         $cache->clear();
 
         $callback = function (Router $router) {
-            $router->get('/:id', '\\D5WHUB\\Test\\Extend\\Router\\middlewareNamedFunction');
+            $router->get('/:id', '\\VSR\\Test\\Extend\\Router\\middlewareNamedFunction');
         };
 
         $noCached = $cache->createRouter($callback, $hash1, $warning1);

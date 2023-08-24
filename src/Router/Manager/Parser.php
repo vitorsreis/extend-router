@@ -1,23 +1,23 @@
 <?php
 
 /**
- * This file is part of d5whub extend router
+ * This file is part of vsr extend router
  * @author Vitor Reis <vitor@d5w.com.br>
+ * @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection
  */
 
-namespace D5WHUB\Extend\Router\Manager;
+namespace VSR\Extend\Router\Manager;
 
-use Closure;
-use D5WHUB\Extend\Router\Context;
-use D5WHUB\Extend\Router\Exception\RuntimeException;
-use D5WHUB\Extend\Router\Exception\SyntaxException;
-use ReflectionException;
-use ReflectionFunction;
-use ReflectionFunctionAbstract;
-use ReflectionMethod;
+use Exception;
+use Throwable;
+use VSR\Extend\Caller\Parser as CallerParser;
+use VSR\Extend\Router\Exception\RuntimeException;
+use VSR\Extend\Router\Exception\SyntaxException;
 
 trait Parser
 {
+    use CallerParser;
+
     /**
      * @param string|string[] $httpMethods
      * @param int $httpCode
@@ -163,137 +163,27 @@ trait Parser
 
     /**
      * @param array $middlewares
-     * @return array{
+     * @return array<int, array{
      *     current: string,
      *     callback: callable,
      *     params: array<string, mixed>,
      *     construct: array<string, mixed>
-     * }[]
+     * }>
      * @throws RuntimeException
      */
     private function parseMiddlewares(array $middlewares)
     {
         return array_map(
             function ($middleware) {
-                $current = $middleware['current'];
-                $callback = $middleware['callback'];
-
-                if (is_object($callback) && !is_a($callback, Closure::class)) {
-                    # anonymous class
-                    $callback = [$callback, '__invoke'];
-                } elseif (is_string($callback)) {
-                    if (strpos($callback, '::') !== false) {
-                        # class::method string
-                        $callback = explode('::', $callback);
-                    } elseif (!function_exists($callback) && class_exists($callback)) {
-                        # class::__invoke
-                        $callback = [$callback, '__invoke'];
-                    }
+                try {
+                    return ['current' => $middleware['current']] + self::parseMiddleware($middleware['callback']);
+                } catch (Exception $e) {
+                    throw new RuntimeException($e->getMessage(), 500, $e);
+                } catch (Throwable $e) {
+                    throw new RuntimeException($e->getMessage(), 500, $e);
                 }
-
-                if (is_array($callback)) {
-                    # method / static method
-                    try {
-                        $reflection = new ReflectionMethod($callback[0], $callback[1]);
-                    } catch (ReflectionException $e) {
-                        throw new RuntimeException($e->getMessage(), 500, $e);
-                    }
-
-                    if (!$reflection->isStatic()) {
-                        $construct = method_exists($callback[0], '__construct')
-                            ? $this->parseMiddlewareParams(new ReflectionMethod($callback[0], '__construct'), true)
-                            : [];
-
-                        $callback = [
-                            'callable' => $callback,
-                            'params' => $this->parseMiddlewareParams($reflection),
-                            'construct' => $construct
-                        ];
-                    } else {
-                        $callback = [
-                            'callable' => $callback,
-                            'params' => $this->parseMiddlewareParams($reflection),
-                            'construct' => null
-                        ];
-                    }
-                } else {
-                    # function / anonymous function / arrow function / string function
-                    try {
-                        $reflection = new ReflectionFunction($callback);
-                        $callback = [
-                            'callable' => $callback,
-                            'params' => $this->parseMiddlewareParams($reflection),
-                            'construct' => null
-                        ];
-                    } catch (ReflectionException $e) {
-                        throw new RuntimeException($e->getMessage(), 500, $e);
-                    }
-                }
-
-                return ['current' => $current] + $callback;
             },
             $middlewares
         );
-    }
-
-    /**
-     * @param ReflectionFunctionAbstract $reflection
-     * @param bool $onlyContext
-     * @return array
-     * @throws RuntimeException
-     */
-    private function parseMiddlewareParams($reflection, $onlyContext = false)
-    {
-        $result = [];
-
-        foreach ($reflection->getParameters() as $param) {
-            $paramType = method_exists($param, 'getType') ? $param->getType() : $param->getClass();
-            if (!$paramType && $param->getName() === 'context') {
-                # "$context"
-                $result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
-                continue;
-            }
-
-            if ($paramType) {
-                if (method_exists($paramType, 'getTypes')) {
-                    $allowed = array_map(static function ($i) {
-                        return $i->getName();
-                    }, $paramType->getTypes());
-                } elseif (method_exists($paramType, 'getName')) {
-                    $allowed = [$paramType->getName()];
-                } else {
-                    $allowed = ['mixed'];
-                }
-
-                if (in_array('mixed', $allowed)) {
-                    # "mixed $context"
-                    $result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
-                    continue;
-                }
-
-                if (in_array(Context::class, $allowed)) {
-                    # "Context $..."
-                    $result[$param->getName()] = ['type' => 'context', 'name' => $reflection->getName()];
-                    continue;
-                }
-            }
-
-            if ($param->isOptional()) {
-                $result[$param->getName()] = [
-                    'type' => 'param',
-                    'name' => $reflection->getName(),
-                    'default' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
-                ];
-            } elseif ($onlyContext) {
-                throw new RuntimeException(
-                    sprintf("Required argument \"%s\" for invoke \"%s\"", $param->getName(), $reflection->getName()),
-                    500
-                );
-            } else {
-                $result[$param->getName()] = ['type' => 'param', 'name' => $reflection->getName()];
-            }
-        }
-
-        return $result;
     }
 }
