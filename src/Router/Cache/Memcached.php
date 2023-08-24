@@ -41,6 +41,10 @@ class Memcached extends AbstractCache
      */
     public function get($key, $default = null)
     {
+        if (!$this->allowed($key)) {
+            return $default;
+        }
+
         $value = $this->memcached->get($key);
         if ($this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
             return $default;
@@ -56,6 +60,10 @@ class Memcached extends AbstractCache
      */
     public function has($key)
     {
+        if (!$this->allowed($key)) {
+            return false;
+        }
+
         $this->memcached->get($key);
         return $this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND;
     }
@@ -67,6 +75,10 @@ class Memcached extends AbstractCache
      */
     public function set($key, $value)
     {
+        if (!$this->allowed($key)) {
+            return;
+        }
+
         ($value = $this->serialize($value)) !== null && $this->memcached->set($key, $value);
     }
 

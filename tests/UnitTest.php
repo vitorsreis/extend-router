@@ -909,7 +909,7 @@ class UnitTest extends TestCase
         };
 
         $noCached = $cache->createRouter($callback, $hash1, $warning1);
-        $this->assertEquals([ 'NOT_FOUND' => 'Cache not found or hash mismatch' ], $warning1);
+        $this->assertEquals(['NOT_FOUND' => 'Cache not found or hash mismatch'], $warning1);
 
         $cached = $cache->createRouter($callback, $hash2, $warning2);
         $this->assertEquals(false, $warning2);
@@ -928,6 +928,89 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::PENDING, $match->header->state);
         $this->assertEquals("id:222", $match->execute()->result);
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $cache->clear();
+    }
+
+    public function testCacheAllow()
+    {
+        $cache = new File(__DIR__ . '/UnitTest/cache');
+        $cache->clear();
+
+        # Router Cache
+        $cache->allowCache(File::FLAG_ROUTER);
+        $cache->set('router-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('router-cache_test'));
+        $this->assertEquals('test-value', $cache->get('router-cache_test'));
+
+        $cache->disallowCache(File::FLAG_ROUTER);
+        $cache->set('router-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('router-cache_test'));
+        $this->assertEquals(null, $cache->get('router-cache_test'));
+
+        # Match Cache
+        $cache->allowCache(File::FLAG_MATCH);
+        $cache->set('match-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('match-cache_test'));
+        $this->assertEquals('test-value', $cache->get('match-cache_test'));
+
+        $cache->disallowCache(File::FLAG_MATCH);
+        $cache->set('match-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('match-cache_test'));
+        $this->assertEquals(null, $cache->get('match-cache_test'));
+
+        # Execute Cache
+        $cache->allowCache(File::FLAG_EXECUTE);
+        $cache->set('execute-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('execute-cache_test'));
+        $this->assertEquals('test-value', $cache->get('execute-cache_test'));
+
+        $cache->disallowCache(File::FLAG_EXECUTE);
+        $cache->set('execute-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('execute-cache_test'));
+        $this->assertEquals(null, $cache->get('execute-cache_test'));
+
+        # Others Cache
+        $cache->allowCache(File::FLAG_OTHERS);
+        $cache->set('xxx-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('xxx-cache_test'));
+        $this->assertEquals('test-value', $cache->get('xxx-cache_test'));
+
+        $cache->disallowCache(File::FLAG_OTHERS);
+        $cache->set('xxx-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('xxx-cache_test'));
+        $this->assertEquals(null, $cache->get('xxx-cache_test'));
+
+        # Multiple Allow
+        $cache->allowCache(File::FLAG_ROUTER | File::FLAG_MATCH | File::FLAG_EXECUTE | File::FLAG_OTHERS);
+        $cache->set('router-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('router-cache_test'));
+        $this->assertEquals('test-value', $cache->get('router-cache_test'));
+        $cache->set('match-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('match-cache_test'));
+        $this->assertEquals('test-value', $cache->get('match-cache_test'));
+        $cache->set('execute-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('execute-cache_test'));
+        $this->assertEquals('test-value', $cache->get('execute-cache_test'));
+        $cache->allowCache(File::FLAG_OTHERS);
+        $cache->set('xxx-cache_test', 'test-value');
+        $this->assertEquals(true, $cache->has('xxx-cache_test'));
+        $this->assertEquals('test-value', $cache->get('xxx-cache_test'));
+
+        # Multiple Disallow
+        $cache->disallowCache(File::FLAG_ROUTER | File::FLAG_MATCH | File::FLAG_EXECUTE | File::FLAG_OTHERS);
+        $cache->set('router-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('router-cache_test'));
+        $this->assertEquals(null, $cache->get('router-cache_test'));
+        $cache->set('match-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('match-cache_test'));
+        $this->assertEquals(null, $cache->get('match-cache_test'));
+        $cache->set('execute-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('execute-cache_test'));
+        $this->assertEquals(null, $cache->get('execute-cache_test'));
+        $cache->set('xxx-cache_test', 'test-value');
+        $this->assertEquals(false, $cache->has('xxx-cache_test'));
+        $this->assertEquals(null, $cache->get('xxx-cache_test'));
 
         $cache->clear();
     }

@@ -26,6 +26,10 @@ class Apcu extends AbstractCache
      */
     public function get($key, $default = null)
     {
+        if (!$this->allowed($key)) {
+            return $default;
+        }
+
         $value = apcu_fetch($key, $success);
         if ($success === false) {
             return $default;
@@ -41,7 +45,7 @@ class Apcu extends AbstractCache
      */
     public function has($key)
     {
-        return apcu_exists($key);
+        return $this->allowed($key) && apcu_exists($key);
     }
 
     /**
@@ -51,6 +55,10 @@ class Apcu extends AbstractCache
      */
     public function set($key, $value)
     {
+        if (!$this->allowed($key)) {
+            return;
+        }
+
         ($value = $this->serialize($value)) !== null && apcu_store($key, $value);
     }
 

@@ -41,6 +41,10 @@ class Memcache extends AbstractCache
      */
     public function get($key, $default = null)
     {
+        if (!$this->allowed($key)) {
+            return $default;
+        }
+
         $value = $this->memcache->get($key);
         if ($value === false) {
             return $default;
@@ -56,7 +60,7 @@ class Memcache extends AbstractCache
      */
     public function has($key)
     {
-        return $this->memcache->get($key) !== false;
+        return $this->allowed($key) && $this->memcache->get($key) !== false;
     }
 
     /**
@@ -66,6 +70,10 @@ class Memcache extends AbstractCache
      */
     public function set($key, $value)
     {
+        if (!$this->allowed($key)) {
+            return;
+        }
+
         ($value = $this->serialize($value)) !== null && $this->memcache->set($key, $value);
     }
 

@@ -7,7 +7,7 @@
 
 namespace VSR\Extend\Router\Cache;
 
-class Memory implements CacheInterface
+class Memory extends AbstractCacheAllow implements CacheInterface
 {
     /**
      * @var array<string, mixed>
@@ -21,6 +21,12 @@ class Memory implements CacheInterface
      */
     public function get($key, $default = null)
     {
+        $this->disallowCache(self::FLAG_ROUTER); // ignore router cache in memory
+
+        if (!$this->allowed($key)) {
+            return $default;
+        }
+
         return $this->has($key) ? $this->memory[$key] : $default;
     }
 
@@ -30,7 +36,9 @@ class Memory implements CacheInterface
      */
     public function has($key)
     {
-        return array_key_exists($key, $this->memory);
+        $this->disallowCache(self::FLAG_ROUTER); // ignore router cache in memory
+
+        return $this->allowed($key) && array_key_exists($key, $this->memory);
     }
 
     /**
@@ -40,8 +48,10 @@ class Memory implements CacheInterface
      */
     public function set($key, $value)
     {
-        if ($key === 'router-hash' || $key === 'router-map') {
-            return; // ignore router cache in memory
+        $this->disallowCache(self::FLAG_ROUTER); // ignore router cache in memory
+
+        if (!$this->allowed($key)) {
+            return;
         }
 
         $this->memory[$key] = $value;

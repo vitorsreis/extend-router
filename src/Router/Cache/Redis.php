@@ -54,6 +54,10 @@ class Redis extends AbstractCache
      */
     public function get($key, $default = null)
     {
+        if (!$this->allowed($key)) {
+            return $default;
+        }
+
         try {
             $value = $this->redis->get($key);
         } catch (Exception $e) {
@@ -74,6 +78,10 @@ class Redis extends AbstractCache
      */
     public function has($key)
     {
+        if (!$this->allowed($key)) {
+            return false;
+        }
+
         try {
             return $this->redis->exists($key);
         } catch (Exception $e) {
@@ -88,6 +96,10 @@ class Redis extends AbstractCache
      */
     public function set($key, $value)
     {
+        if (!$this->allowed($key)) {
+            return;
+        }
+
         try {
             ($value = $this->serialize($value)) !== null && $this->redis->set($key, $value);
         } catch (Exception $e) {

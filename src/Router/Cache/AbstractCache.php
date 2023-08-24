@@ -13,7 +13,7 @@ use Exception;
 use ReflectionException;
 use ReflectionFunction;
 
-abstract class AbstractCache implements CacheInterface
+abstract class AbstractCache extends AbstractCacheAllow implements CacheInterface
 {
     /**
      * @param string $key

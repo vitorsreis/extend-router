@@ -3,6 +3,11 @@ CHANGELOG
 
 ## 4.3.0
 - Use [VSR\\Extend\\Caller](https://github.com/vitorsreis/extend-caller)
+- Cache improvements
+  - Add permission control for cache prefixes
+    - flags: FLAG_ROUTER, FLAG_MATCH, FLAG_EXECUTE, FLAG_OTHERS
+    - allowCache(flag)
+    - disallowCache(flag)
 - Fix PSR-12
 
 ## 4.2.0

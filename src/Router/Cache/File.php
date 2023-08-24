@@ -48,6 +48,10 @@ class File extends AbstractCache
      */
     public function get($key, $default = null)
     {
+        if (!$this->allowed($key)) {
+            return $default;
+        }
+
         $filename = $this->getFileName($key);
 
         if (!file_exists($filename)) {
@@ -69,7 +73,7 @@ class File extends AbstractCache
      */
     public function has($key)
     {
-        return file_exists($this->getFileName($key));
+        return $this->allowed($key) && file_exists($this->getFileName($key));
     }
 
     /**
@@ -79,6 +83,10 @@ class File extends AbstractCache
      */
     public function set($key, $value)
     {
+        if (!$this->allowed($key)) {
+            return;
+        }
+
         ($value = $this->serialize($value)) !== null && file_put_contents($this->getFileName($key), $value);
     }
 
