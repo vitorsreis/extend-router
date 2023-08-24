@@ -8,6 +8,7 @@ CHANGELOG
     - flags: FLAG_ROUTER, FLAG_MATCH, FLAG_EXECUTE, FLAG_OTHERS, FLAG_ALL
     - allowCache(flag)
     - disallowCache(flag)
+- Fix property cached in match result
 - Fix PSR-12
 
 ## 4.2.0

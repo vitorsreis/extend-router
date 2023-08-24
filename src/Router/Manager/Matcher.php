@@ -107,7 +107,9 @@ trait Matcher
             case '405':
                 throw new MethodNotAllowedException("Method \"$httpMethod\" not allowed for route \"$uri\"", 405);
             default:
-                return new Context($result, $this->cache);
+                $context = new Context($result, $this->cache);
+                $context->cached = isset($cache);
+                return $context;
         }
     }
 
