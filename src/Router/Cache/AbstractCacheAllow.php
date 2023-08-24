@@ -14,8 +14,9 @@ abstract class AbstractCacheAllow implements CacheInterface
     const FLAG_MATCH = 2;
     const FLAG_EXECUTE = 4;
     const FLAG_OTHERS = 8;
+    const FLAG_ALL = self::FLAG_ROUTER | self::FLAG_MATCH | self::FLAG_EXECUTE | self::FLAG_OTHERS;
 
-    protected $allowed_flags = self::FLAG_ROUTER | self::FLAG_MATCH | self::FLAG_EXECUTE | self::FLAG_OTHERS;
+    protected $allowed_flags = self::FLAG_ALL;
 
     /**
      * @param string $key
@@ -37,7 +38,7 @@ abstract class AbstractCacheAllow implements CacheInterface
     }
 
     /**
-     * @param int $flags FLAG_ROUTER | FLAG_MATCH | FLAG_EXECUTE | FLAG_OTHERS
+     * @param int $flags FLAG_ROUTER | FLAG_MATCH | FLAG_EXECUTE | FLAG_OTHERS | FLAG_ALL
      * @return void
      */
     public function allowCache($flags)
@@ -46,7 +47,7 @@ abstract class AbstractCacheAllow implements CacheInterface
     }
 
     /**
-     * @param int $flags FLAG_ROUTER | FLAG_MATCH | FLAG_EXECUTE | FLAG_OTHERS
+     * @param int $flags FLAG_ROUTER | FLAG_MATCH | FLAG_EXECUTE | FLAG_OTHERS | FLAG_ALL
      */
     public function disallowCache($flags)
     {

@@ -191,6 +191,19 @@ $router->match('GET', '/iphone-xs')->execute();
 // output: "product 100"
 ```
 
+- Allow\Disallow cache prefixes for store.
+    - ```FLAG_ROUTER``` to enable/disable cache router
+    - ```FLAG_MATCH``` to enable/disable cache match
+    - ```FLAG_EXECUTE``` to enable/disable cache execute
+    - ```FLAG_OTHERS``` to enable/disable cache others
+    - ```FLAG_ALL``` to enable/disable cache all
+
+```php
+$cache = new \VSR\Extend\Router\Cache\Memory();
+$cache->disallowCache($cache::FLAG_ALL);
+$cache->allowCache($cache::FLAG_ROUTER);
+```
+
 ---
 
 ### Context param

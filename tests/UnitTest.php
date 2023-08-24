@@ -938,51 +938,51 @@ class UnitTest extends TestCase
         $cache->clear();
 
         # Router Cache
-        $cache->allowCache(File::FLAG_ROUTER);
+        $cache->allowCache($cache::FLAG_ROUTER);
         $cache->set('router-cache_test', 'test-value');
         $this->assertEquals(true, $cache->has('router-cache_test'));
         $this->assertEquals('test-value', $cache->get('router-cache_test'));
 
-        $cache->disallowCache(File::FLAG_ROUTER);
+        $cache->disallowCache($cache::FLAG_ROUTER);
         $cache->set('router-cache_test', 'test-value');
         $this->assertEquals(false, $cache->has('router-cache_test'));
         $this->assertEquals(null, $cache->get('router-cache_test'));
 
         # Match Cache
-        $cache->allowCache(File::FLAG_MATCH);
+        $cache->allowCache($cache::FLAG_MATCH);
         $cache->set('match-cache_test', 'test-value');
         $this->assertEquals(true, $cache->has('match-cache_test'));
         $this->assertEquals('test-value', $cache->get('match-cache_test'));
 
-        $cache->disallowCache(File::FLAG_MATCH);
+        $cache->disallowCache($cache::FLAG_MATCH);
         $cache->set('match-cache_test', 'test-value');
         $this->assertEquals(false, $cache->has('match-cache_test'));
         $this->assertEquals(null, $cache->get('match-cache_test'));
 
         # Execute Cache
-        $cache->allowCache(File::FLAG_EXECUTE);
+        $cache->allowCache($cache::FLAG_EXECUTE);
         $cache->set('execute-cache_test', 'test-value');
         $this->assertEquals(true, $cache->has('execute-cache_test'));
         $this->assertEquals('test-value', $cache->get('execute-cache_test'));
 
-        $cache->disallowCache(File::FLAG_EXECUTE);
+        $cache->disallowCache($cache::FLAG_EXECUTE);
         $cache->set('execute-cache_test', 'test-value');
         $this->assertEquals(false, $cache->has('execute-cache_test'));
         $this->assertEquals(null, $cache->get('execute-cache_test'));
 
         # Others Cache
-        $cache->allowCache(File::FLAG_OTHERS);
+        $cache->allowCache($cache::FLAG_OTHERS);
         $cache->set('xxx-cache_test', 'test-value');
         $this->assertEquals(true, $cache->has('xxx-cache_test'));
         $this->assertEquals('test-value', $cache->get('xxx-cache_test'));
 
-        $cache->disallowCache(File::FLAG_OTHERS);
+        $cache->disallowCache($cache::FLAG_OTHERS);
         $cache->set('xxx-cache_test', 'test-value');
         $this->assertEquals(false, $cache->has('xxx-cache_test'));
         $this->assertEquals(null, $cache->get('xxx-cache_test'));
 
         # Multiple Allow
-        $cache->allowCache(File::FLAG_ROUTER | File::FLAG_MATCH | File::FLAG_EXECUTE | File::FLAG_OTHERS);
+        $cache->allowCache($cache::FLAG_ROUTER | $cache::FLAG_MATCH | $cache::FLAG_EXECUTE | $cache::FLAG_OTHERS);
         $cache->set('router-cache_test', 'test-value');
         $this->assertEquals(true, $cache->has('router-cache_test'));
         $this->assertEquals('test-value', $cache->get('router-cache_test'));
@@ -998,7 +998,7 @@ class UnitTest extends TestCase
         $this->assertEquals('test-value', $cache->get('xxx-cache_test'));
 
         # Multiple Disallow
-        $cache->disallowCache(File::FLAG_ROUTER | File::FLAG_MATCH | File::FLAG_EXECUTE | File::FLAG_OTHERS);
+        $cache->disallowCache($cache::FLAG_ROUTER | $cache::FLAG_MATCH | $cache::FLAG_EXECUTE | $cache::FLAG_OTHERS);
         $cache->set('router-cache_test', 'test-value');
         $this->assertEquals(false, $cache->has('router-cache_test'));
         $this->assertEquals(null, $cache->get('router-cache_test'));
