@@ -39,18 +39,21 @@ abstract class AbstractCacheAllow implements CacheInterface
 
     /**
      * @param int $flags FLAG_ROUTER | FLAG_MATCH | FLAG_EXECUTE | FLAG_OTHERS | FLAG_ALL
-     * @return void
+     * @return $this
      */
     public function allowCache($flags)
     {
         $this->allowed_flags |= $flags;
+        return $this;
     }
 
     /**
      * @param int $flags FLAG_ROUTER | FLAG_MATCH | FLAG_EXECUTE | FLAG_OTHERS | FLAG_ALL
+     * @return $this
      */
     public function disallowCache($flags)
     {
         $this->allowed_flags &= ~$flags;
+        return $this;
     }
 }
