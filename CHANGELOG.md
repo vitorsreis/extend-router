@@ -1,6 +1,9 @@
 CHANGELOG
 ---
 
+## 4.3.1
+- Fix deprecated alert matcher sort
+
 ## 4.3.0
 - Use [VSR\\Extend\\Caller](https://github.com/vitorsreis/extend-caller)
 - Cache improvements
