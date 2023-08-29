@@ -3,6 +3,7 @@ CHANGELOG
 
 ## 4.3.1
 - Fix deprecated alert matcher sort
+- Add property allowedMethods in Context and MethodNotAllowedException
 
 ## 4.3.0
 - Use [VSR\\Extend\\Caller](https://github.com/vitorsreis/extend-caller)

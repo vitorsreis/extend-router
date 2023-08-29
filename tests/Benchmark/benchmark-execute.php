@@ -25,7 +25,7 @@ $setting = [
 
     // Libraries to compare
     'library' => [
-        'd5whub/extend-benchmark' => true,
+        'vitorsreis/extend-router' => true,
         'nikic/fast-route' => true,
         'symfony/routing' => true,
 //        'symfony/routing:optimized' => true,
@@ -114,7 +114,7 @@ $agent = new VSR\Extend\Benchmark(
     $setting['num_random']
 );
 
-if (!empty($setting['library']['d5whub/extend-benchmark'])) {
+if (!empty($setting['library']['vitorsreis/extend-router'])) {
     require_once __DIR__ . "/Setup/me.php";
 }
 

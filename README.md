@@ -80,6 +80,16 @@ try {
 }
 ```
 
+- In case 405, you can get allowed methods:
+
+```php
+try {
+    $router->match('PUT', '/aaa');
+} catch (\VSR\Extend\Router\Exception\MethodNotAllowedException $e) {
+    echo implode(', ', $e->allowedMethods); // output: "GET, POST, ..."
+}
+```
+
 ---
 
 ### Friendly uris
@@ -237,6 +247,7 @@ $router->any('/a*', function (\VSR\Extend\Router\Context $custom_name_context) {
 | ```$context->header->endTime```            | Execution end time                                                                 |
 | ```$context->header->elapsedTime```        | Execution time                                                                     |
 | ```$context->cached```                     | Execution result is cached                                                         |
+| ```$context->allowedMethods```             | Current match allowed methods                                                      |
 | ```$context->result```                     | Partial/Final execution result                                                     |
 | ```$context->execute(?$callback)```        | Start execution, ```$callback``` is optional and available argument ```$context``` |
 | ```$context->stop()```                     | Stop execution                                                                     |

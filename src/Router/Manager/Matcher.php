@@ -51,11 +51,14 @@ trait Matcher
             $indexes = $this->indexes($uri);
         }
 
+        $allowedMethods = [];
+
         if (!empty($indexes)) {
             foreach ($indexes as $index => $paramValues) {
                 $collection = array_filter(
                     $this->routeCollection->get($index),
-                    static function ($i) use ($httpMethod) {
+                    static function ($i) use ($httpMethod, &$allowedMethods) {
+                        $allowedMethods = array_merge($allowedMethods, $i['httpMethod']);
                         return in_array($httpMethod, $i['httpMethod']) || in_array('ANY', $i['httpMethod']);
                     }
                 );
@@ -86,6 +89,8 @@ trait Matcher
             }
         }
 
+        $allowedMethods = array_unique($allowedMethods);
+
         if (empty($result)) {
             $result = $resultMethodNotAllowed ? '405' : '404';
             empty($this->cache) ?: $this->cache->set($cacheKey, $result);
@@ -105,9 +110,13 @@ trait Matcher
             case '404':
                 throw new NotFoundException("Route \"$uri\" not found", 404);
             case '405':
-                throw new MethodNotAllowedException("Method \"$httpMethod\" not allowed for route \"$uri\"", 405);
+                throw new MethodNotAllowedException(
+                    "Method \"$httpMethod\" not allowed for route \"$uri\"",
+                    405,
+                    $allowedMethods
+                );
             default:
-                $context = new Context($result, $this->cache);
+                $context = new Context($result, $allowedMethods, $this->cache);
                 $context->cached = isset($cache);
                 return $context;
         }

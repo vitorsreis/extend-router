@@ -9,4 +9,14 @@ namespace VSR\Extend\Router\Exception;
 
 class MethodNotAllowedException extends RuntimeException
 {
+    /**
+     * @var string[]
+     */
+    public $allowedMethods = [];
+
+    public function __construct($message, $httpCode, $allowedMethods, $previous = null)
+    {
+        parent::__construct($message, $httpCode, $previous);
+        $this->allowedMethods = $allowedMethods;
+    }
 }

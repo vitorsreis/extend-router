@@ -46,6 +46,11 @@ class Context
     public $cached = false;
 
     /**
+     * @var string[] Allowed methods
+     */
+    public $allowedMethods;
+
+    /**
      * @var mixed Persist execution data
      */
     private $data = [];
@@ -58,7 +63,7 @@ class Context
     /**
      * @throws RuntimeException
      */
-    public function __construct(array $middlewares, CacheInterface $cache = null)
+    public function __construct(array $middlewares, array $allowedMethods, CacheInterface $cache = null)
     {
         $this->cache = $cache;
         $this->current = new Current();
@@ -66,6 +71,7 @@ class Context
         $this->middlewares = $this->parseMiddlewares($middlewares);
         $this->header->hash = sha1(serialize(array_column($this->middlewares, 'current')));
         $this->header->total = count($this->middlewares);
+        $this->allowedMethods = $allowedMethods;
     }
 
     /**

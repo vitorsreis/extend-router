@@ -18,7 +18,7 @@
         <ini name="display_startup_errors" value="On" />
     </php>
     <testsuites>
-        <testsuite name="D5W Extend Router Unit Test Suite">
+        <testsuite name="VSR Extend Router Unit Test Suite">
             <directory>./tests</directory>
             <exclude>./tests/Benchmark/</exclude>
             <exclude>./tests/UnitTest/*</exclude>

@@ -1045,4 +1045,55 @@ class UnitTest extends TestCase
 
         $cache->clear();
     }
+
+    public function testGetAllowedMethodsContext()
+    {
+        $router = new Router();
+        $router
+            ->get('/', static function () {
+                return 'TEST:GET';
+            })
+            ->get('*', static function () {
+                return 'TEST:GET';
+            })
+            ->post('/', static function () {
+                return 'TEST:POST';
+            })
+            ->put('/', static function () {
+                return 'TEST:PUT';
+            });
+
+        $match = $router->match('GET', '/');
+        $this->assertEquals(['GET', 'POST', 'PUT'], $match->allowedMethods);
+    }
+
+    public function testGetAllowedMethodsException()
+    {
+        $router = new Router();
+        $router
+            ->get('/', static function () {
+                return 'TEST:GET';
+            })
+            ->get('*', static function () {
+                return 'TEST:GET';
+            })
+            ->post('/', static function () {
+                return 'TEST:POST';
+            })
+            ->put('/', static function () {
+                return 'TEST:PUT';
+            });
+
+        try {
+            $router->match('DELETE', '/');
+            $e = null;
+        } catch (\Exception $e) {
+        }
+
+        $this->assertTrue(is_object($e));
+        $this->assertInstanceOf(MethodNotAllowedException::class, $e);
+        $this->assertEquals(405, $e->getCode());
+        $this->assertEquals('Method "DELETE" not allowed for route "/"', $e->getMessage());
+        $this->assertEquals(['GET', 'POST', 'PUT'], $e->allowedMethods);
+    }
 }
