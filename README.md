@@ -6,10 +6,10 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/vitorsreis/extend-router?style=flat-square&color=0476B7)](https://packagist.org/packages/vitorsreis/extend-router)
 [![Repo Stars](https://img.shields.io/github/stars/vitorsreis/extend-router?style=social)](https://github.com/vitorsreis/extend-router)
 
-Indexing by words tree and regex marked, this router is very elegant, fast and powerful. Architected as a queue of
-merged middlewares (not unique match), it proposes multiple interactions in routes with cache, contexts and persistent
+Indexed by words tree and regex matching, this router is very elegant, fast, and powerful. Architected as a queue of
+merged middlewares (not unique match), it offers multiple interactions in routes with cache, contexts, and persistent
 data.
-Unit test passed versions: ```5.6```, ```7.4```, ```8.1``` and ```8.2```
+Unit tests passed on versions: ```5.6```, ```7.4```, ```8.1``` and ```8.2```
 
 ---
 
@@ -92,9 +92,9 @@ try {
 
 ---
 
-### Friendly uris
+### Friendly URIs
 
-You can add friendly url to redirect to specific routes:
+You can add friendly URIs to redirect to specific routes:
 
 ```php
 $router->post('/product/:id', function ($id) { echo "post product $id"; });
@@ -218,8 +218,9 @@ $cache->allowCache($cache::FLAG_ROUTER);
 
 ### Context param
 
-Context contains all information of current execution, use argument with name "$context" of type omitted, "mixed" or "
-\VSR\Extend\Router\Context" on middlewares or on constructor of class if middleware of type class method non-static.
+Context contains all information about the current execution. Use an argument with the name "$context" of type "
+omitted,""mixed," or "\VSR\Extend\Router\Context" in middlewares or in the constructor of a class if the middleware is
+of type non-static class method
 
 ```php
 $router->get('/aaa', function ($context) { ... });
