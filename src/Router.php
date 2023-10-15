@@ -81,12 +81,20 @@ class Router
         $this->manager->setCache($cache);
     }
 
+    /**
+     * @param string ...$method
+     * @return $this
+     */
     public function allowMethod(...$method)
     {
         $this->manager->allowMethod(...$method);
         return $this;
     }
 
+    /**
+     * @param string ...$method
+     * @return $this
+     */
     public function disallowMethod(...$method)
     {
         $this->manager->disallowMethod(...$method);
