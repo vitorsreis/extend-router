@@ -50,7 +50,7 @@ class Router
     /**
      * @param string $key
      * @param string $pattern
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function addFilter($key, $pattern)
@@ -63,7 +63,7 @@ class Router
      * @param string|string[] $method
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function addRoute($method, $route, ...$middleware)
@@ -83,7 +83,7 @@ class Router
 
     /**
      * @param string ...$method
-     * @return $this
+     * @return static
      */
     public function allowMethod(...$method)
     {
@@ -93,7 +93,7 @@ class Router
 
     /**
      * @param string ...$method
-     * @return $this
+     * @return static
      */
     public function disallowMethod(...$method)
     {
@@ -104,7 +104,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function any($route, ...$middleware)
@@ -115,7 +115,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function get($route, ...$middleware)
@@ -126,7 +126,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function post($route, ...$middleware)
@@ -137,7 +137,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function put($route, ...$middleware)
@@ -148,7 +148,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function patch($route, ...$middleware)
@@ -159,7 +159,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function delete($route, ...$middleware)
@@ -170,7 +170,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function options($route, ...$middleware)
@@ -181,7 +181,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string ...$middleware
-     * @return $this
+     * @return static
      * @throws SyntaxException
      */
     public function head($route, ...$middleware)
@@ -192,7 +192,7 @@ class Router
     /**
      * @param string $friendly
      * @param string $route
-     * @return $this
+     * @return static
      */
     public function friendly($friendly, $route)
     {
@@ -203,7 +203,7 @@ class Router
     /**
      * @param string $route
      * @param callable|array|string|null $callback function(Router $router)
-     * @return $this
+     * @return static
      * @throws RuntimeException
      */
     public function group($route, $callback = null)
