@@ -154,6 +154,21 @@ Below are pre-registered filters:
 
 ---
 
+### Allowing/Disallowing methods
+Default list: ```GET```, ```POST```, ```PUT```, ```PATCH```, ```DELETE```, ```OPTIONS```, ```HEAD```
+
+```php
+$router->allowMethod('XXX', ...);
+// $router->addRoute('XXX', '/aaa', function () { ... }); = OK
+// $router->match('XXX', '/aaa'); = OK
+
+$router->disallowMethod('GET', ...);
+// $router->addRoute('GET', '/aaa', function () { ... }); = throw SyntaxException(500)
+// $router->match('GET', '/aaa'); = throw RuntimeException(400)
+```
+
+---
+
 ### Cache
 
 - This usage mode or ```Memory``` cache does not store the router map.
@@ -236,7 +251,7 @@ $router->any('/a*', function (\VSR\Extend\Router\Context $custom_name_context) {
 | Property                                   | Description                                                                        |
 |:-------------------------------------------|:-----------------------------------------------------------------------------------|
 | ```$context->current->route```             | Current match middleware route                                                     |
-| ```$context->current->httpMethod```        | Current match middleware http method                                               |
+| ```$context->current->method```            | Current match middleware method                                                    |
 | ```$context->current->uri```               | Current match middleware uri                                                       |
 | ```$context->current->friendly```          | Current match middleware friendly uri                                              |
 | ```$context->current->params```            | Current match middleware uri variables                                             |
@@ -290,7 +305,7 @@ $router->match('POST', '/99')->execute(function ($context) {
     // partial result, run 3 times
     echo '[' .
         "{$context->header->cursor}/{$context->header->total} " .
-        "{$context->current->httpMethod} {$context->current->route} = $context->result" .
+        "{$context->current->method} {$context->current->route} = $context->result" .
     '], ';
 });
 // output: "[1/3 POST /:aa = a1:99], [2/3 POST /:aa = a2:99], [3/3 POST /:bb = bb:99], "

@@ -38,6 +38,11 @@ class Manager extends Constants
     private $filterCollection = [];
 
     /**
+     * @var string[]
+     */
+    public $methodCollection = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
+
+    /**
      * @var RouteCollection
      */
     private $routeCollection;
@@ -85,20 +90,20 @@ class Manager extends Constants
     }
 
     /**
-     * @param array|string $httpMethod
+     * @param array|string $method
      * @param string $route
      * @param array|callable|string ...$middleware
      * @return void
      * @throws SyntaxException
      * @noinspection PhpDocMissingThrowsInspection PhpUnhandledExceptionInspection
      */
-    public function addRoute($httpMethod, $route, ...$middleware)
+    public function addRoute($method, $route, ...$middleware)
     {
-        $httpMethods = $this->parseHttpMethods($httpMethod);
+        $methods = $this->parseMethods($method);
         list($route, $pattern, $paramNames, $static, $words) = $this->parseRoute($route);
 
         $this->routeCollection->add(
-            $httpMethods,
+            $methods,
             $route,
             $pattern,
             $paramNames,
@@ -122,7 +127,25 @@ class Manager extends Constants
     }
 
     /**
-     * @param string $httpMethod
+     * @param string ...$method
+     * @return void
+     */
+    public function allowMethod(...$method)
+    {
+        $this->methodCollection = array_unique(array_merge($this->methodCollection, $method));
+    }
+
+    /**
+     * @param string ...$method
+     * @return void
+     */
+    public function disallowMethod(...$method)
+    {
+        $this->methodCollection = array_diff($this->methodCollection, $method);
+    }
+
+    /**
+     * @param string $method
      * @param string $uri
      * @return Context
      * @throws MethodNotAllowedException
@@ -130,9 +153,9 @@ class Manager extends Constants
      * @throws RuntimeException
      * @noinspection PhpDocMissingThrowsInspection PhpUnhandledExceptionInspection
      */
-    public function match($httpMethod, $uri)
+    public function match($method, $uri)
     {
-        $httpMethod = $this->parseHttpMethods($httpMethod, 400)[0];
-        return $this->matchRoute($httpMethod, $uri);
+        $method = $this->parseMethods($method, 400)[0];
+        return $this->matchRoute($method, $uri);
     }
 }

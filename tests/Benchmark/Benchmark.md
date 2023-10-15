@@ -10,12 +10,12 @@
 
 |                                   Library | Time               | Difference                        |
 |------------------------------------------:|:-------------------|-----------------------------------|
-|             **vsr extend router (4.3.0)** | **0.00012993336s** | **baseline**                      |
-|      FastRoute (nikic/fast-route - 1.3.0) | 0.00042273283s     | 225.3% slower (+0.00029279947s)   |
-|           Pux PHP (corneltek/pux - 1.6.0) | 0.00169231653s     | 1202.4% slower (+0.00156238317s)  |
-| Symfony Routing (symfony/routing - 6.3.1) | 0.00466184855s     | 3487.9% slower (+0.00453191519s)  |
-|           Klein.php (klein/klein - 2.1.2) | 0.01854341269s     | 14171.5% slower (+0.01841347933s) |
-|         Aura Router (aura/router - 3.3.0) | 0.04323968887s     | 33178.4% slower (+0.04310975552s) |
+|             **vsr extend router (4.4.0)** | **0.00014951229s** | **baseline**                      |
+|      FastRoute (nikic/fast-route - 1.3.0) | 0.00044725180s | 199.1% slower (+0.00029773951s)   |
+|           Pux PHP (corneltek/pux - 1.6.1) | 0.00171257019s | 1045.4% slower (+0.00156305790s)  |
+| Symfony Routing (symfony/routing - 6.3.1) | 0.00500857592s | 3249.9% slower (+0.00485906363s)  |
+|           Klein.php (klein/klein - 2.1.2) | 0.01988410234s | 13199.3% slower (+0.01973459005s) |
+|         Aura Router (aura/router - 3.3.0) | 0.04730867863s | 31542% slower (+0.04715916634s) |
 
 ## Achievable tests
 

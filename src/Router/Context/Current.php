@@ -17,7 +17,7 @@ class Current
     /**
      * @var string|null
      */
-    public $httpMethod;
+    public $method;
 
     /**
      * @var string|null

@@ -40,7 +40,7 @@ class RouteCollection
     public $variableTree = [];
 
     /**
-     * @param string[] $httpMethod
+     * @param string[] $method
      * @param string $route
      * @param string $pattern
      * @param string[] $paramNames
@@ -49,14 +49,14 @@ class RouteCollection
      * @param array $middlewares
      * @return $this
      */
-    public function add($httpMethod, $route, $pattern, $paramNames, $static, $words, $middlewares)
+    public function add($method, $route, $pattern, $paramNames, $static, $words, $middlewares)
     {
         $index = $static
             ? $this->addStatic($route)
             : $this->addVariable($pattern, $words);
 
         $this->routeCollection[$index][$this->order++] = [
-            'httpMethod' => $httpMethod,
+            'method' => $method,
             'route' => $route,
             'pattern' => $pattern,
             'paramNames' => $paramNames,
@@ -110,7 +110,7 @@ class RouteCollection
     /**
      * @param int $index
      * @return null|array{
-     *     httpMethod:string[],
+     *     method:string[],
      *     route:string,
      *     pattern:string,
      *     paramNames:string[],

@@ -399,11 +399,11 @@ class UnitTest extends TestCase
             ->match('POST', '/aaa');
     }
 
-    public function testSyntaxErrorInvalidHttpMethod()
+    public function testSyntaxErrorInvalidMethod()
     {
         $this->expectException(SyntaxException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage("Http method \"XXX\" invalid");
+        $this->expectExceptionMessage("Method \"XXX\" invalid");
 
         (new Router())->addRoute('XXX', '/', static function () {
             return '';
@@ -451,11 +451,11 @@ class UnitTest extends TestCase
             ->execute();
     }
 
-    public function testRuntimeInvalidHttpMethod()
+    public function testRuntimeInvalidMethod()
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionCode(400);
-        $this->expectExceptionMessage("Http method \"XXX\" invalid");
+        $this->expectExceptionMessage("Method \"XXX\" invalid");
 
         (new Router())->match('XXX', '/100');
     }
@@ -1095,5 +1095,46 @@ class UnitTest extends TestCase
         $this->assertEquals(405, $e->getCode());
         $this->assertEquals('Method "DELETE" not allowed for route "/"', $e->getMessage());
         $this->assertEquals(['GET', 'POST', 'PUT'], $e->allowedMethods);
+    }
+
+    public function testAllowedMethods()
+    {
+        $router = new Router();
+
+        $router->allowMethod('XXX');
+        $router->addRoute('XXX', '/', static function () {
+            return 'TEST:XXX';
+        });
+        $match = $router->match('XXX', '/');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals('TEST:XXX', $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $router->disallowMethod('XXX');
+        try {
+            $match = $router->match('XXX', '/');
+            $e = null;
+        } catch (\Exception $e) {
+            $match = null;
+        }
+        $this->assertTrue(is_object($e));
+        $this->assertInstanceOf(RuntimeException::class, $e);
+        $this->assertEquals(400, $e->getCode());
+        $this->assertEquals('Method "XXX" invalid', $e->getMessage());
+        $this->assertEquals(null, $match);
+
+        try {
+            $router->addRoute('XXX', '/', static function () {
+                return '';
+            });
+            $e = null;
+        } catch (\Exception $e) {
+        }
+
+        $this->assertTrue(is_object($e));
+        $this->assertInstanceOf(SyntaxException::class, $e);
+        $this->assertEquals(500, $e->getCode());
+        $this->assertEquals('Method "XXX" invalid', $e->getMessage());
     }
 }

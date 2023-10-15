@@ -60,15 +60,15 @@ class Router
     }
 
     /**
-     * @param string|string[] $httpMethod
+     * @param string|string[] $method
      * @param string $route
      * @param callable|array|string ...$middleware
      * @return $this
      * @throws SyntaxException
      */
-    public function addRoute($httpMethod, $route, ...$middleware)
+    public function addRoute($method, $route, ...$middleware)
     {
-        $this->manager->addRoute($httpMethod, $this->group . $route, ...$middleware);
+        $this->manager->addRoute($method, $this->group . $route, ...$middleware);
         return $this;
     }
 
@@ -79,6 +79,18 @@ class Router
     public function setCache($cache)
     {
         $this->manager->setCache($cache);
+    }
+
+    public function allowMethod(...$method)
+    {
+        $this->manager->allowMethod(...$method);
+        return $this;
+    }
+
+    public function disallowMethod(...$method)
+    {
+        $this->manager->disallowMethod(...$method);
+        return $this;
     }
 
     /**
@@ -182,29 +194,31 @@ class Router
 
     /**
      * @param string $route
-     * @param callable $callback function(Router $router)
+     * @param callable|array|string|null $callback function(Router $router)
      * @return $this
      * @throws RuntimeException
      */
-    public function group($route, $callback)
+    public function group($route, $callback = null)
     {
-        call_user_func_array(
-            $callback,
-            [new self(null, $this->group . $route, $this->manager)]
-        );
+        $instance = new self(null, $this->group . $route, $this->manager);
+        if (null === $callback) {
+            return $instance;
+        }
+
+        (new Caller($callback))->execute([$instance]);
         return $this;
     }
 
     /**
-     * @param string $httpMethod
+     * @param string $method
      * @param string $route
      * @return Context
      * @throws MethodNotAllowedException
      * @throws NotFoundException
      * @throws RuntimeException
      */
-    public function match($httpMethod, $route)
+    public function match($method, $route)
     {
-        return $this->manager->match($httpMethod, $route);
+        return $this->manager->match($method, $route);
     }
 }

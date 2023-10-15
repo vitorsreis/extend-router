@@ -15,14 +15,14 @@ use VSR\Extend\Router\Exception\RuntimeException;
 trait Matcher
 {
     /**
-     * @param string $httpMethod
+     * @param string $method
      * @param string $uri
      * @return Context
      * @throws MethodNotAllowedException
      * @throws NotFoundException
      * @throws RuntimeException
      */
-    private function matchRoute($httpMethod, $uri)
+    private function matchRoute($method, $uri)
     {
         $uri = $this->parseUri($uri);
         $friendly = null;
@@ -36,7 +36,7 @@ trait Matcher
         $result = [];
         $resultMethodNotAllowed = false;
 
-        $cacheKey = "match-" . sha1("$httpMethod:$uri");
+        $cacheKey = "match-" . sha1("$method:$uri");
         if (!empty($this->cache) && $this->cache->has($cacheKey)) {
             $cache = $this->cache->get($cacheKey);
             if ($cache == '404' || $cache == '405') {
@@ -57,9 +57,9 @@ trait Matcher
             foreach ($indexes as $index => $paramValues) {
                 $collection = array_filter(
                     $this->routeCollection->get($index),
-                    static function ($i) use ($httpMethod, &$allowedMethods) {
-                        $allowedMethods = array_merge($allowedMethods, $i['httpMethod']);
-                        return in_array($httpMethod, $i['httpMethod']) || in_array('ANY', $i['httpMethod']);
+                    static function ($i) use ($method, &$allowedMethods) {
+                        $allowedMethods = array_merge($allowedMethods, $i['method']);
+                        return in_array($method, $i['method']) || in_array('ANY', $i['method']);
                     }
                 );
 
@@ -76,7 +76,7 @@ trait Matcher
 
                     $current = [
                         'route' => $index,
-                        'httpMethod' => $httpMethod,
+                        'method' => $method,
                         'uri' => $uri,
                         'friendly' => $friendly,
                         'params' => $params
@@ -111,7 +111,7 @@ trait Matcher
                 throw new NotFoundException("Route \"$uri\" not found", 404);
             case '405':
                 throw new MethodNotAllowedException(
-                    "Method \"$httpMethod\" not allowed for route \"$uri\"",
+                    "Method \"$method\" not allowed for route \"$uri\"",
                     405,
                     $allowedMethods
                 );

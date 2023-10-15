@@ -1,6 +1,10 @@
 CHANGELOG
 ---
 
+## 4.4.0
+- Implement group without callback
+- Add methods allowMethod/disallowMethod
+
 ## 4.3.1
 - Fix deprecated alert matcher sort
 - Add property allowedMethods in Context and MethodNotAllowedException

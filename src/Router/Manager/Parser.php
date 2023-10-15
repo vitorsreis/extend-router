@@ -19,38 +19,29 @@ trait Parser
     use CallerParser;
 
     /**
-     * @param string|string[] $httpMethods
+     * @param string|string[] $method
      * @param int $httpCode
      * @return string[]
      * @throws RuntimeException
      * @throws SyntaxException
      */
-    private function parseHttpMethods($httpMethods, $httpCode = 500)
+    private function parseMethods($method, $httpCode = 500)
     {
-        if (is_string($httpMethods)) {
-            $httpMethods = [$httpMethods];
+        if (is_string($method)) {
+            $method = [$method];
         }
 
         return array_map(
-            static function ($httpMethod) use ($httpCode) {
-                switch ($httpMethod) {
-                    case 'ANY':
-                    case 'GET':
-                    case 'POST':
-                    case 'PUT':
-                    case 'PATCH':
-                    case 'DELETE':
-                    case 'OPTIONS':
-                    case 'HEAD':
-                        return $httpMethod;
-
-                    default:
-                        throw $httpCode === 400
-                            ? new RuntimeException("Http method \"$httpMethod\" invalid", $httpCode)
-                            : new SyntaxException("Http method \"$httpMethod\" invalid", $httpCode);
+            function ($method) use ($httpCode) {
+                if ($method !== 'ANY' && !in_array($method, $this->methodCollection, true)) {
+                    throw $httpCode === 400
+                        ? new RuntimeException("Method \"$method\" invalid", $httpCode)
+                        : new SyntaxException("Method \"$method\" invalid", $httpCode);
                 }
+
+                return $method;
             },
-            $httpMethods
+            $method
         );
     }
 
@@ -80,6 +71,10 @@ trait Parser
      */
     private function parseUri($uri)
     {
+        if (!$uri) {
+            return '/';
+        }
+
         do {
             $uri = preg_replace(self::REGEX_DELIMITER . '\*\*' . self::REGEX_DELIMITER, '*', $uri, -1, $count);
         } while ($count);

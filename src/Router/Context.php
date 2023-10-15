@@ -106,7 +106,7 @@ class Context
                 $middleware = $this->middlewares[$this->header->cursor - 1];
 
                 $this->current->route = $middleware['current']['route'];
-                $this->current->httpMethod = $middleware['current']['httpMethod'];
+                $this->current->method = $middleware['current']['method'];
                 $this->current->uri = $middleware['current']['uri'];
                 $this->current->friendly = $middleware['current']['friendly'];
                 $this->current->params = (object)$middleware['current']['params'];
