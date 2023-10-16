@@ -1,6 +1,9 @@
 CHANGELOG
 ---
 
+## 4.4.1
+- Fix class inheritance
+
 ## 4.4.0
 - Implement group without callback
 - Add methods allowMethod/disallowMethod
