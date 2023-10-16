@@ -28,7 +28,7 @@ trait Resolver
     {
         try {
             /** @noinspection PhpParamsInspection */
-            return self::resolve(
+            return static::resolve(
                 $callable,
                 ['context' => $this] + $parameters,
                 ['context' => $this] + $construct,

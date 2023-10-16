@@ -171,7 +171,7 @@ trait Parser
         return array_map(
             function ($middleware) {
                 try {
-                    return ['current' => $middleware['current']] + self::parseMiddleware($middleware['callback']);
+                    return ['current' => $middleware['current']] + static::parseMiddleware($middleware['callback']);
                 } catch (Exception $e) {
                     throw new RuntimeException($e->getMessage(), 500, $e);
                 } catch (Throwable $e) {

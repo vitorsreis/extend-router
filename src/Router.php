@@ -208,7 +208,7 @@ class Router
      */
     public function group($route, $callback = null)
     {
-        $instance = new self(null, $this->group . $route, $this->manager);
+        $instance = new static(null, $this->group . $route, $this->manager);
         if (null === $callback) {
             return $instance;
         }
