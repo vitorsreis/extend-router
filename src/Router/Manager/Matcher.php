@@ -191,9 +191,7 @@ trait Matcher
             return [];
         }
 
-        if (empty($words)) {
-            return isset($candidates['$']) ? $candidates['$'] : [];
-        }
+        $end = empty($words);
 
         $word = array_shift($words);
 
@@ -208,6 +206,10 @@ trait Matcher
             )
         ) {
             $indexes = array_merge($indexes, $match);
+        }
+
+        if ($end) {
+            return array_merge($indexes, isset($candidates['$']) ? $candidates['$'] : []);
         }
 
         if (

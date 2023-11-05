@@ -1,6 +1,9 @@
 CHANGELOG
 ---
 
+## 4.4.2
+- Fix joker empty match
+
 ## 4.4.1
 - Fix class inheritance
 

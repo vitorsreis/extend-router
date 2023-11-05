@@ -226,7 +226,7 @@ class UnitTest extends TestCase
     public function testJoker()
     {
         $router = new Router();
-        $router->get('/user/*', static function () {
+        $router->get('/user*', static function () {
             return "TEST";
         });
 
@@ -237,6 +237,12 @@ class UnitTest extends TestCase
         $this->assertEquals(ContextState::COMPLETED, $match->header->state);
 
         $match = $router->match('GET', '/user/bbb');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals('TEST', $match->execute()->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+
+        $match = $router->match('GET', '/user');
         $this->assertInstanceOf(Context::class, $match);
         $this->assertEquals(ContextState::PENDING, $match->header->state);
         $this->assertEquals('TEST', $match->execute()->result);
