@@ -1,6 +1,9 @@
 CHANGELOG
 ---
 
+## 4.5.0
+- Add create custom params on execute
+
 ## 4.4.2
 - Fix joker empty match
 

@@ -1,7 +1,7 @@
 {
     "name": "vitorsreis/extend-router",
     "description": "Very elegant, fast and powerful router for PHP",
-    "version": "4.4.2",
+    "version": "4.5.0",
     "type": "library",
     "license": "MIT",
     "authors": [

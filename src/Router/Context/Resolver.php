@@ -20,7 +20,7 @@ trait Resolver
     /**
      * @param array|callable|string $callable
      * @param array $parameters
-     * @param array|null $construct
+     * @param array $construct
      * @return mixed
      * @throws RuntimeException
      */

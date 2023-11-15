@@ -76,10 +76,12 @@ class Context
 
     /**
      * @param callable|array|string|null $callback
+     * @param array $parameters
+     * @param array $construct
      * @return $this
      * @throws RuntimeException
      */
-    public function execute($callback = null)
+    public function execute($callback = null, $parameters = [], $construct = [])
     {
         if ($callback !== null) {
             $callback = $this->parseMiddlewares([['current' => null, 'callback' => $callback]])[0];
@@ -111,7 +113,12 @@ class Context
                 $this->current->friendly = $middleware['current']['friendly'];
                 $this->current->params = (object)$middleware['current']['params'];
 
-                $this->result = $this->resolveWithContext($middleware, $middleware['current']['params']);
+                $this->result = $this->resolveWithContext(
+                    $middleware,
+                    $parameters + $middleware['current']['params'],
+                    $construct
+                );
+
                 if ($callback !== null) {
                     $this->resolveWithContext($callback);
                 }

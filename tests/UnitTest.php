@@ -1143,4 +1143,19 @@ class UnitTest extends TestCase
         $this->assertEquals(500, $e->getCode());
         $this->assertEquals('Method "XXX" invalid', $e->getMessage());
     }
+
+    public function testCustomParamsOnExecute()
+    {
+        $router = new Router();
+        $router->get('/', static function ($param1, $param2) {
+            return "TEST:$param1-$param2";
+        });
+
+        # GET
+        $match = $router->match('GET', '/');
+        $this->assertInstanceOf(Context::class, $match);
+        $this->assertEquals(ContextState::PENDING, $match->header->state);
+        $this->assertEquals('TEST:1-2', $match->execute(null, ['param1' => 1, 'param2' => 2])->result);
+        $this->assertEquals(ContextState::COMPLETED, $match->header->state);
+    }
 }

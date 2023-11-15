@@ -15,13 +15,13 @@ $setting = [
     'num_iterations' => 1,
 
     // Total of random iterations
-    'num_random' => 100,
+    'num_random' => 10,
 
     // Total routes added to test
     'num_routes' => 3000,
 
     // Total variables added to routes
-    'num_variables' => 5,
+    'num_variables' => 10,
 
     // Libraries to compare
     'library' => [
